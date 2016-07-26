@@ -1,0 +1,101 @@
+{
+	"name": {
+		"message": "Immobile",
+		"description": "Extension name"
+	},
+
+	"description": {
+		"message": "Automatically redirects certain mobile web pages to their desktop version, and allows custom redirection rules.",
+		"description": "Extension description"
+	},
+
+	"popup_title": {
+		"message": "Immobile Redirector",
+		"description": "Popup page title"
+	},
+
+	"popup_description": {
+		"message": "Automatic mobile to desktop webpage redirection",
+		"description": "Popup page's short description of the extension. Goes right below the extension's name."
+	},
+
+	"popup_enabled_string": {
+		"message": "enabled",
+		"description": "'enabled' string."
+	},
+
+	"popup_disabled_string": {
+		"message": "disabled",
+		"description": "'disabled' string."
+	},
+
+	"popup_enable_string": {
+		"message": "Enable",
+		"description": "'Enable' text for the Enable/Disable toggle button on the popup page."
+	},
+
+	"popup_disable_string": {
+		"message": "Disable",
+		"description": "'Disable' text for the Enable/Disable toggle button on the popup page."
+	},
+
+	"popup_add_new_rule_string": {
+		"message": "Add Redirection Rule",
+		"description": "Text for a button that redirects the user to the page that lets them add a new rule."
+	},
+
+	"options_title": {
+		"message": "Immobile Options",
+		"description": "Options page title."
+	},
+
+	"options_add_rule_string": {
+		"message": "Add a rule:",
+		"description": "Text that tells the user to 'add a rule' in the options page."
+	},
+
+	"options_add_rule_button": {
+		"message": "Add",
+		"description": "Text that shows up on the button for adding a new rule."
+	},
+
+	"options_new_source_placeholder": {
+		"message": "Enter source domain",
+		"description": "Placeholder text in the input box that tells the user to enter a source domain."
+	},
+
+	"options_new_destination_placeholder": {
+		"message": "Enter destination domain",
+		"description": "Placeholder text in the input box that tells the user to enter a destination domain."
+	},
+
+	"options_current_rules_string": {
+		"message": "Current rules:",
+		"description": "Text that tells the user that the table of currently existing rules is below."
+	},
+
+	"options_no_rules_string": {
+		"message": "No redirection rules available.",
+		"description": "Text that tells the user that there aren't any available rules."
+	},
+
+	"options_no_empty_rule_string": {
+		"message": "The new rule can't be empty",
+		"description": "Warning string to alert the user that their new rule can't be empty."
+	},
+
+	"options_no_duplicates_string": {
+		"message": "The new rule can't use an existing source domain",
+		"description": "Warning string to alert the user that their new rule has a duplicate source."
+	},
+
+	"options_no_cycles_string": {
+		"message": "The new rule's source domain can't point to an existing destination domain",
+		"description": "Warning string to alert the user that their new rule can't produce an infinite cycle (ex. Source points to already existing Destination)"	
+	},
+
+	"options_mismatched_subdomains_string": {
+		"message": "Success. However, there may be issues due to a potentially unequal number of subdomains.",
+		"description": "Alert string to let the user know that they may run into issues by having a different number of subdomains in each side of their rule. (ex. amazon.com -> smile.amazon.com won't work.)"
+	}
+}

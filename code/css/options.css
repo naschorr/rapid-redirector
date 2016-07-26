@@ -1,0 +1,197 @@
+--logo-bg-color: #de991c;
+--logo-text-color: #f2f2f2;
+--dark-text-color: #696969;
+
+* {
+	font-family: "Arial", sans-serif;
+	font-size: 100%;
+	text-overflow: ellipses;
+	overflow: hidden;
+	color: #696969;
+}
+
+body {
+	border-style: solid;
+	border-width: 1px;
+	border-color: #f2f2f2;
+	width: 600px;
+}
+
+.notification-popup {
+	position: fixed;
+	margin: 10px;
+	width: 500px;
+	height: auto;
+	left: 50%;
+	margin-left: -255px;	/* ((width / 2) + (margin / 2)) * (-1) */
+	padding: 10px 5px;
+	background: rgba(105, 105, 105, 0.8);
+	display: none;
+	border-radius: 2px;
+}
+
+.notification-popup.red {
+	background: rgba(255, 71, 42, 0.8);
+}
+
+.notification-popup.green {
+	background: rgba(31, 189, 79, 0.8);
+}
+
+.notification-popup.visible {
+	display: block;
+}
+
+.notification-popup-status {
+	color: white;
+	text-align: center;
+}
+
+.icon {
+	font-size: 200%;
+}
+
+.decorative-bar {
+	background-color: #de991c;
+	max-width: 100%;
+	height: 5px;
+}
+
+.left {
+	float: left;
+}
+
+.right {
+	float: right;
+}
+
+.add-rule-container {
+	padding: 5px;
+	overflow: auto;
+}
+
+.add-rule-status {
+	padding: 5px;
+	color: #696969;
+	border: none;
+	font-style: italic;
+}
+
+.add-rule-text-container {
+	overflow: hidden;
+	height: 100%;
+}
+
+.half-text {
+	margin: 5px 5px 0 0;
+	color: #696969;
+	width: 46%;
+	padding: 2px 5px;
+	display: inline-block;
+	border: none;
+	border-bottom: solid 2px #f2f2f2;
+	transition: border 0.25s;
+	font-size: 100%;
+}
+
+.half-text:focus {
+	border-bottom: solid 2px #de991c;
+	outline: 0;
+}
+
+.add-rule-button-container {
+	width: auto;
+	height: 100%;
+	float: right;
+}
+
+.add-rule-button {
+	background-color: #de991c;
+	color: #f2f2f2;
+	padding: 3px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	border: 2px solid #de991c;
+	margin: 2.5px;
+	outline: 0;
+	border-radius: 2px;
+
+	-webkit-transition-duration: 0.25s; /* Safari */
+	transition-duration: 0.25s;
+}
+
+.add-rule-button:hover {
+	background-color: #f2f2f2;
+	color: #de991c;
+	border: 2px solid #de991c;
+}
+
+.add-rule-button:active {
+	position: relative;
+	top: 1px;
+}
+
+.current-rules-container {
+	padding: 5px;
+}
+
+.current-rules-status {
+	padding: 5px;
+	color: #696969;
+	border: none;
+	font-style: italic;
+}
+
+table {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+td {
+	padding: 2.5px 5px;
+	text-align: left;
+	color: #696969;
+	margin: auto;
+	max-width: 250px;	/* Depends on body width */
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+tr {
+	border-bottom: 2px solid #f2f2f2;
+}
+
+tr:first-child {
+	border-top: 2px solid #f2f2f2;
+}
+
+tr:hover {
+	background-color: #f2f2f2;
+}
+
+.arrow {
+	font-size: 175%;
+}
+
+.delete-rule-button {
+	background-color: transparent;
+	font-size: 200%;
+	border: none;
+	color: #de991c;
+	padding: 0px;
+	outline: 0;
+	float: right;
+
+	transition-duration: 0.25s;
+}
+
+.delete-rule-button:hover {
+	color: #ff472a;
+}
+
+.delete-rule-button:active {
+	position: relative;
+	top: 1px;
+}

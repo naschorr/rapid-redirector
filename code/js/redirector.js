@@ -21,18 +21,32 @@ function isRedirectRule(url, rules) {
 }
 
 /**
- * Checks if the URL is of the 'm.' style. (ex. en.m.wikipedia.org)
+ * Checks if the URL is a mobile URL. (ex. en.m.wikipedia.org or mobile.twitter.com)
  * @param {string} url - The url to check.
  * @return {string|null} String containing the now non-mobile URL. Null if it's not a mobile URL.
  */
 function isMobile(url) {
-  var match = /([^a-z ]m\.)/i.exec(url);
-  if(match) {
-    var nonMobileUrl = url.split('');
-    nonMobileUrl.splice(match.index + 1, 2);
-    return nonMobileUrl.join('');
+  var mobileSubdomains = ['m', 'mobile'];
+
+  var domain = /\/\/(\S+?)\//.exec(url)[1];
+  var domainTokens = domain.split('.');
+
+  /* Basically, just loop through the array of domain tokens and check each mobile subdomain against it.
+     If a match is found, stop the loop, and replace the url's domain with the new non-mobile one. Theres probaby a better way to do this. */
+  var domainIndex = 0;
+  var mobileIndex = 0;
+  var match = null;
+  while(!match && domainIndex < domainTokens.length) {
+    while(!match && mobileIndex < mobileSubdomains.length) {
+      if(domainTokens[domainIndex] === mobileSubdomains[mobileIndex]) {
+        domainTokens.splice(domainIndex, 1);
+        match = url.replace(domain, domainTokens.join('.'));
+      }
+      mobileIndex++;
+    }
+    domainIndex++;
   }
-  return null;
+  return match;
 }
 
 /* Listener Init */

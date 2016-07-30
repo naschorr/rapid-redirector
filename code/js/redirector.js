@@ -52,9 +52,7 @@ function isMobile(url) {
 /* Listener Init */
 chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
   if (changeInfo.status == 'loading' && tab.active) {
-    chrome.storage.sync.get({
-      redirection: 'enable'   // Default to redirection enabled.
-      }, function(items) {
+    chrome.storage.sync.get({ redirection: 1  }, function(items) { // Default to redirection enabled.
         /* Make sure that redirection is enabled */
         if(items.redirection === 1) {
           chrome.storage.sync.get("redirectionRules", function(result) {

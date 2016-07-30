@@ -5,6 +5,8 @@ var NO_EMPTY_TEXT = chrome.i18n.getMessage('options_no_empty_rule_string');
 var NO_DUPS_TEXT = chrome.i18n.getMessage('options_no_duplicates_string');
 var NO_CYCLES_TEXT = chrome.i18n.getMessage('options_no_cycles_string');
 var MISMATCHED_SUBDOMAINS_TEXT = chrome.i18n.getMessage('options_mismatched_subdomains_string');
+var WARNING_SYMBOL = '\u26a0';
+var SUCCESS_SYMBOL = '\u2713';
 /* End Globals */
 
 /* Note: 'Rule' refers to the combination of the source and destination domains. */
@@ -86,6 +88,15 @@ function hasChars(string) {
  */
 function getButtonIndex(buttonId) {
 	return parseInt(buttonId.match(/([0-9])+/)[0], 10);
+}
+
+/**
+ * Calculates the length of time it should take someone to read the provided string (in milliseconds).
+ * @param {string} string - The string to check for how long it takes to read.
+ * @return {int} The time in milliseconds that it should take for someone to read the string.
+ */
+function calcTimeToReadString(string) {
+	return 500 + 75 * string.length;
 }
 
 /**
@@ -176,36 +187,30 @@ function getSubdomainDifference(source, destination) {
 function isValidInput(source, destination, rules) {
 	/* Can't be empty or only have whitespace characters. */
 	if(!hasChars(source) || !hasChars(destination)) {
-		showNotificationPopup('\u26a0', NO_EMPTY_TEXT, 'red', 2000, hideNotificationPopup);
+		showNotificationPopup(WARNING_SYMBOL, NO_EMPTY_TEXT, 'red', calcTimeToReadString(NO_EMPTY_TEXT), hideNotificationPopup);
 		return false;
 	}
 
 	/* Can't have duplicate sources. */
 	if(rules.some(function(obj) {
-		if(hasValue(obj, "src", source)) {
-			return true;
-		}
-		return false;
+		return hasValue(obj, "src", source);
 	})) {
-		showNotificationPopup('\u26a0', NO_DUPS_TEXT, 'red', 2500, hideNotificationPopup);
+		showNotificationPopup(WARNING_SYMBOL, NO_DUPS_TEXT, 'red', calcTimeToReadString(NO_DUPS_TEXT), hideNotificationPopup);
 		return false;
 	}
 
 	/* Can't have a new source that's already a destination. */
 	if(rules.some(function(obj) {
-		if(hasValue(obj, "dest", source)) {
-			return true;
-		}
-		return false;
+		return hasValue(obj, "dest", source);
 	})) {
-		showNotificationPopup('\u26a0', NO_CYCLES_TEXT, 'red', 3000, hideNotificationPopup);
+		showNotificationPopup(WARNING_SYMBOL, NO_CYCLES_TEXT, 'red', calcTimeToReadString(NO_CYCLES_TEXT), hideNotificationPopup);
 		return false;
 	}
 
 	/* Could still be a valid rule, but alert users to potential issues with their source and destination subdomain counts. 
 		(ex. amazon.com -> smile.amazon.com won't work, but www.amazon.com -> smile.amazon.com will work.) */
 	if(getSubdomainDifference(source, destination) > 0) {
-		showNotificationPopup('\u2713', MISMATCHED_SUBDOMAINS_TEXT, 'green', 5000, hideNotificationPopup);
+		showNotificationPopup(SUCCESS_SYMBOL, MISMATCHED_SUBDOMAINS_TEXT, 'green', calcTimeToReadString(MISMATCHED_SUBDOMAINS_TEXT), hideNotificationPopup);
 	}
 
 	return true;

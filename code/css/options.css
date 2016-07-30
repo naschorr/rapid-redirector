@@ -1,19 +1,4 @@
---logo-bg-color: #de991c;
---logo-text-color: #f2f2f2;
---dark-text-color: #696969;
-
-* {
-	font-family: "Arial", sans-serif;
-	font-size: 100%;
-	text-overflow: ellipses;
-	overflow: hidden;
-	color: #696969;
-}
-
 body {
-	border-style: solid;
-	border-width: 1px;
-	border-color: #f2f2f2;
 	width: 600px;
 }
 
@@ -51,20 +36,6 @@ body {
 	font-size: 200%;
 }
 
-.decorative-bar {
-	background-color: #de991c;
-	max-width: 100%;
-	height: 5px;
-}
-
-.left {
-	float: left;
-}
-
-.right {
-	float: right;
-}
-
 .add-rule-container {
 	padding: 5px;
 	overflow: auto;
@@ -72,7 +43,7 @@ body {
 
 .add-rule-status {
 	padding: 5px;
-	color: #696969;
+	color: var(--text-color);
 	border: none;
 	font-style: italic;
 }
@@ -84,18 +55,18 @@ body {
 
 .half-text {
 	margin: 5px 5px 0 0;
-	color: #696969;
+	color: var(--text-color);
 	width: 46%;
 	padding: 2px 5px;
 	display: inline-block;
 	border: none;
-	border-bottom: solid 2px #f2f2f2;
+	border-bottom: solid 2px var(--accent-color);
 	transition: border 0.25s;
 	font-size: 100%;
 }
 
 .half-text:focus {
-	border-bottom: solid 2px #de991c;
+	border-bottom: solid 2px var(--main-color);
 	outline: 0;
 }
 
@@ -105,40 +76,13 @@ body {
 	float: right;
 }
 
-.add-rule-button {
-	background-color: #de991c;
-	color: #f2f2f2;
-	padding: 3px;
-	text-align: center;
-	text-decoration: none;
-	display: inline-block;
-	border: 2px solid #de991c;
-	margin: 2.5px;
-	outline: 0;
-	border-radius: 2px;
-
-	-webkit-transition-duration: 0.25s; /* Safari */
-	transition-duration: 0.25s;
-}
-
-.add-rule-button:hover {
-	background-color: #f2f2f2;
-	color: #de991c;
-	border: 2px solid #de991c;
-}
-
-.add-rule-button:active {
-	position: relative;
-	top: 1px;
-}
-
 .current-rules-container {
 	padding: 5px;
 }
 
 .current-rules-status {
 	padding: 5px;
-	color: #696969;
+	color: var(--text-color);
 	border: none;
 	font-style: italic;
 }
@@ -151,7 +95,7 @@ table {
 td {
 	padding: 2.5px 5px;
 	text-align: left;
-	color: #696969;
+	color: var(--text-color);
 	margin: auto;
 	max-width: 250px;	/* Depends on body width */
 	overflow: hidden;
@@ -160,15 +104,15 @@ td {
 }
 
 tr {
-	border-bottom: 2px solid #f2f2f2;
+	border-bottom: 2px solid var(--accent-color);
 }
 
 tr:first-child {
-	border-top: 2px solid #f2f2f2;
+	border-top: 2px solid var(--accent-color);
 }
 
 tr:hover {
-	background-color: #f2f2f2;
+	background-color: var(--accent-color);
 }
 
 .arrow {
@@ -179,11 +123,10 @@ tr:hover {
 	background-color: transparent;
 	font-size: 200%;
 	border: none;
-	color: #de991c;
+	color: var(--main-color);
 	padding: 0px;
 	outline: 0;
 	float: right;
-
 	transition-duration: 0.25s;
 }
 

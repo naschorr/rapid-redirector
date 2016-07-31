@@ -35,6 +35,7 @@ body {
 	border: 2px solid var(--main-color);
 	border-radius: 2px;
 	margin: 2.5px;
+	cursor: pointer;
 	transition-duration: 0.25s;
 }
 

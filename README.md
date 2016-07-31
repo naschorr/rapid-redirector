@@ -13,7 +13,7 @@ Alternatively, open up your Chrome extension list, and then drag and drop the rF
 A proper Chrome Web Store release is coming soon!
 
 ## Usage
-After installation, clicking on the icon will bring up a popup interface with two basic options:
+After installation, clicking on the icon ![extension icon small](https://raw.githubusercontent.com/naschorr/Immobile/master/code/images/icon_16.png) will bring up a popup interface with two basic options:
 <p align="center"><img src="https://raw.githubusercontent.com/naschorr/Immobile/master/resources/popup.png"/></p>
 
 The 'Disable' button refers to what will happen to the popup's redirection ability after the button is pressed. In this case, pressing 'Disable' will disable redirection. Likewise, pressing 'Enable' would enable redirection.

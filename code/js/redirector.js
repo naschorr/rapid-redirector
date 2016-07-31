@@ -45,6 +45,7 @@ function isMobile(url) {
       mobileIndex++;
     }
     domainIndex++;
+    mobileIndex = 0;
   }
   return match;
 }

@@ -8,12 +8,10 @@ function isRedirectRule(url, rules) {
   var replaced = null;
   var i = 0;
   while(!replaced && i < rules.length) {
-    /* Make sure that the destination isn't already in the URL. (ex amazon.com -> smile.amazon.com) */
-    if(url.search(rules[i].dest) < 0) {
-      var attempt = url.replace(rules[i].src, rules[i].dest);
-      if(url !== attempt) {
-        replaced = attempt;
-      }
+    var attempt = url.replace(rules[i].src, rules[i].dest);
+
+    if(url !== attempt) {
+      replaced = attempt;
     }
     i++;
   }

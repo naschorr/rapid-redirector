@@ -84,19 +84,30 @@ function hasChars(string) {
 /**
  * Gets the index associated with a given button's id. This index can then be used to delete specific redirection rules.
  * @param {string} buttonId - The id associated with a button in the current rules table.
- * @return {int} The integer representing the button's index in the rules table.
+ * @return {int|null} The integer representing the button's index in the rules table, or null if there isn't a valid index.
  */
 function getButtonIndex(buttonId) {
-	return parseInt(buttonId.match(/([0-9])+/)[0], 10);
+	try{
+		var index = parseInt(buttonId.match(/([0-9])+/)[0], 10);
+	}
+	catch(error){
+		console.log('getButtonIndex() error: ', error);
+		return null;
+	}
+
+	return index;
 }
 
 /**
  * Calculates the length of time it should take someone to read the provided string (in milliseconds).
  * @param {string} string - The string to check for how long it takes to read.
- * @return {int} The time in milliseconds that it should take for someone to read the string.
+ * @return {int} The time in milliseconds that it should take for someone to read the string. 0 if the string is empty
  */
 function calcTimeToReadString(string) {
-	return 500 + 75 * string.length;
+	if(string) {
+		return 500 + 75 * string.length;
+	}
+	return 0;
 }
 
 /**
@@ -119,6 +130,7 @@ function showNotificationPopup(symbol, text, color, delay, callback) {
 		}
 		notificationElement.classList.add('visible');
 	}
+
 	/* Callback is mostly to be used to call hideNotificationPopup(). Delay specifies a timer before calling the callback. */
 	if(callback) {
 		if(delay) {
@@ -135,9 +147,16 @@ function showNotificationPopup(symbol, text, color, delay, callback) {
  * Hides the notification popup by emptying the text sections, and removing the added styles.
  */
 function hideNotificationPopup() {
-	document.getElementById('notificationPopup').className = 'notification-popup';
-	document.getElementById('notificationPopupStatusIcon').innerHTML = '';
-	document.getElementById('notificationPopupStatus').innerHTML = '';
+	try{
+		document.getElementById('notificationPopup').className = 'notification-popup';
+		document.getElementById('notificationPopupStatusIcon').innerHTML = '';
+		document.getElementById('notificationPopupStatus').innerHTML = '';
+	}
+	catch(error){
+		/* This should only pop during testing. If it does in normal operation, then things are very wrong */
+		console.log(`hideNotificationPopup() error. Probably from trying to set the className for an element that doesn't exist. Error: ${error}`);
+		return;
+	}
 }
 
 /**
@@ -227,7 +246,7 @@ function storeRule(source, destination) {
 		var rules = result.redirectionRules || [];
 
 		if(isValidInput(source, destination, rules)) {
-			rules.push({src:source, dest:destination});
+			rules.push({src:source.trim(), dest:destination.trim()});
 
 			chrome.storage.sync.set({redirectionRules: rules}, function() {
 				debugLog(`Added new rule: '${source}' -> '${destination}'`);
@@ -245,6 +264,12 @@ function storeRule(source, destination) {
  */
 function deleteRule(buttonId) {
 	var buttonIndex = getButtonIndex(buttonId);
+
+	/* Make sure that there is a legitimate index to delete with */
+	if(buttonIndex === null) {
+		debugLog(`Invalid button index from button: ${buttonId}`);
+		return;
+	}
 
 	chrome.storage.sync.get("redirectionRules", function(result) {
 		var rules = result.redirectionRules || [];

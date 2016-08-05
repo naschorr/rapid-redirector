@@ -34,9 +34,11 @@ function isMobile(url) {
     var domain = /\/\/(\S+?)\//.exec(url)[1];
     var domainTokens = domain.split('.');
   }
-  catch(error) {
-    console.log(error);
-    return null;
+  catch (error) {
+    if(error.name === 'TypeError') {
+      console.log(`TypeError in isMobile(). Arg: ${url}. Error: {$error}`);
+      return null; 
+    }
   }
 
   /* Basically, just loop through the array of domain tokens and check each mobile subdomain against it.

@@ -90,9 +90,11 @@ function getButtonIndex(buttonId) {
 	try{
 		var index = parseInt(buttonId.match(/([0-9])+/)[0], 10);
 	}
-	catch(error){
-		console.log('getButtonIndex() error: ', error);
-		return null;
+	catch (error){
+		if(error.name === 'TypeError') {
+			console.log('TypeError in getButtonIndex(). Arg: ${buttonId} Error: ', error);
+			return null;
+		}
 	}
 
 	return index;
@@ -108,6 +110,23 @@ function calcTimeToReadString(string) {
 		return 500 + 75 * string.length;
 	}
 	return 0;
+}
+
+/**
+ * Attempts to remove the protocol as well as leadingforward slashes from a URL.
+ * @param {string} url - The url to (attempt to) remove the protocol and slashes from.
+ * @return {string} url - The url with the protocol and slashes removed, or the url itself.
+ */
+function removeProtocol(url) {
+	try {
+		return /\/\/(\S+)/i.exec(url)[1];
+	}
+	catch (error) {
+		if(error.name === 'TypeError') {
+			console.log(`TypeError in removeProtocol(). Arg: ${url}. Probably a url that doesn't have a protocol. Error: ${error}`)
+			return url;
+		}
+	}
 }
 
 /**
@@ -152,16 +171,9 @@ function showNotificationPopup(symbol, text, color, delay, callback) {
  * Hides the notification popup by emptying the text sections, and removing the added styles.
  */
 function hideNotificationPopup() {
-	try{
-		document.getElementById('notificationPopup').className = 'notification-popup';
-		document.getElementById('notificationPopupStatusIcon').innerHTML = '';
-		document.getElementById('notificationPopupStatus').innerHTML = '';
-	}
-	catch(error){
-		/* This should only pop during testing. If it does in normal operation, then things are very wrong */
-		console.log(`hideNotificationPopup() error. Probably from trying to set the className for an element that doesn't exist. Error: ${error}`);
-		return;
-	}
+	document.getElementById('notificationPopup').className = 'notification-popup';
+	document.getElementById('notificationPopupStatusIcon').innerHTML = '';
+	document.getElementById('notificationPopupStatus').innerHTML = '';
 }
 
 /**
@@ -171,6 +183,9 @@ function hideNotificationPopup() {
  * @return {int} The difference in subdomain counts between the source and destination.
  */
 function getSubdomainDifference(source, destination) {
+	source = removeProtocol(source);
+	destination = removeProtocol(destination);
+
 	var longer;
 	var shorter;
 	/* Determine which domain is longer */
@@ -231,8 +246,10 @@ function isValidInput(source, destination, rules) {
 		return false;
 	}
 
-	/* Could still be a valid rule, but alert users to potential issues with their source and destination subdomain counts. 
-		(ex. amazon.com -> smile.amazon.com won't work, but www.amazon.com -> smile.amazon.com will work.) */
+	/* 
+		Could still be a valid rule, but alert users to potential issues with their source and destination subdomain counts. 
+		(ex. amazon.com -> smile.amazon.com won't work, but www.amazon.com -> smile.amazon.com will work.) 
+	*/
 	if(getSubdomainDifference(source, destination) > 0) {
 		showNotificationPopup(SUCCESS_SYMBOL, MISMATCHED_SUBDOMAINS_TEXT, 'green', calcTimeToReadString(MISMATCHED_SUBDOMAINS_TEXT), hideNotificationPopup);
 	}

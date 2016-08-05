@@ -1,6 +1,25 @@
 describe("the background redirector", function() {
+	/*
+		Notes: 
+		FQ = 'fully qualified'
+	*/
 	describe("the isMobile function", function() {
-		it("should return null with an empty URL", function() {
+		/* 	Tests:
+			empty string - null
+			non-URL string - null
+			FQ non-mobile URL - null
+			FQ non-URL string - null
+			non-FQ URL - null
+			non-mobile FQ URL with 'm' in the front of the path - null
+			non-mobile FQ URL with 'm' later in the path - null
+			non-mobile FQ URL with 'mobile' substring in the domain - null
+			non-mobile FQ URL without a trailing forward slash - null
+			non-mobile FQ URL with a 'm.' in the path - null
+			FQ URL with 'm' subdomain in the front of the domain - different URL
+			FQ URL with 'm' subdomain after the front of the domain - different URL
+		*/
+
+		it("should return null with an empty string", function() {
 			expect(isMobile('')).toBeNull();
 		});
 
@@ -69,7 +88,20 @@ describe("the background redirector", function() {
 	});
 
 	describe("the isRedirectRule function", function() {
-		it("should return null for an empty URL and empty rule array", function() {
+		/*	Tests:
+			empty URL, empty rule array - null
+			FQ URL, empty array - null
+			FQ URL, rule array with incorrect keys - null
+			FQ URL, rule array with empty src and dest keys - null
+			FQ URL, rule array with no matches - null
+			FQ URL, rule array with match at the beginning - different URL
+			FQ URL, rule array with match in the middle - different URL
+			FQ URL, rule array with match at the end - different URL
+			FQ URL, rule array with a match where the destination is longer than the source - different URL
+			FQ URL, rule array with multiple matches - first matching URL
+		*/
+
+		it("should return null for an empty URL and empty array", function() {
 			expect(isRedirectRule('', [])).toBeNull();
 		});
 
@@ -78,8 +110,7 @@ describe("the background redirector", function() {
 		});
 
 		/*
-			'malformed' refers to an array of objects that aren't rules objects.
-			Rule object format can be seen in isRedirectRule function documentation in redirector.js
+			'malformed' refers to an array of objects that aren't rules objects. (ex. Their keys aren't correct)
 		*/
 		it("should return null for a URL and malformed rule array", function() {
 			var malformed = [
@@ -140,6 +171,19 @@ describe("the background redirector", function() {
 				{src:"www.two.com", dest:"nickschorr.com"},
 				{src:"sub.domain.com", dest:"nickschorr.com"},
 				{src:"nickschorr.com", dest:"nickschorr.com/test"}
+			];
+			var result = isRedirectRule(url, match);
+
+			expect(result).not.toBeNull();
+			expect(result).not.toEqual(url);
+		});
+
+		it("should return a different URL, even if the destination domain is longer than the source domain", function() {
+			var url = 'https://en.m.wikipedia.org/wiki/Main_Page';
+			var match = [
+				{src:"www.two.com", dest:"nickschorr.com"},
+				{src:"sub.domain.com", dest:"nickschorr.com"},
+				{src:"en.m.wikipedia.org/wiki/Main_Page", dest:"wikipedia.org"}
 			];
 			var result = isRedirectRule(url, match);
 

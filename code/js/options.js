@@ -119,6 +119,11 @@ function calcTimeToReadString(string) {
  * @param {function} callback - The function to be invoked either after the notification has been displayed, potentially after a delay. Mostly used to call the hideNotificationPopup function.
  */
 function showNotificationPopup(symbol, text, color, delay, callback) {
+	/* Don't bother showing the popup if the delay is instant */
+	if(delay === 0) {
+		return;
+	}
+
 	if(text) {
 		var notificationElement = document.getElementById('notificationPopup');
 		document.getElementById('notificationPopupStatus').innerHTML = text;

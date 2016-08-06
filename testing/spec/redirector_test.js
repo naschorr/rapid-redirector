@@ -1,7 +1,7 @@
 describe("the background redirector", function() {
 	/*
 		Notes: 
-		FQ = 'fully qualified'
+		FQ = 'fully-qualified'
 	*/
 	describe("the isMobile function", function() {
 		/* 	Tests:
@@ -27,26 +27,26 @@ describe("the background redirector", function() {
 			expect(isMobile('this is a non URL string!')).toBeNull();
 		});
 
-		it("should return null with a fully qualified non-mobile URL", function() {
+		it("should return null with a FQ non-mobile URL", function() {
 			expect(isMobile('http://www.amazon.com/')).toBeNull();
 		});
 
 		/* 
-			'appears to be fully qualified' refers to a string that can fool the regex that looks for
+			'appears to be FQ' refers to a string that can fool the regex that looks for
 			leading and trailing forward slashes in the URL being tested. Ideally there would be a way to
 			check explicitly for valid domains, but with all the potential variations around the world, 
 			it seems both fast and reasonable to do it this way.
 		*/
-		it("should return null with a non-URL string that appears to be fully qualified", function() {
+		it("should return null with a non-URL string that appears to be FQ", function() {
 			expect(isMobile('http://this is not a url!/')).toBeNull();
 		});
 
-		it("should return null without a fully qualified URL", function() {
+		it("should return null without a FQ URL", function() {
 			expect(isMobile('nickschorr.com')).toBeNull();
 		});
 
 		/*
-			Assume fully qualified URLS from here on out, since that's what Chrome gives us when we
+			Assume FQ URLS from here on out, since that's what Chrome gives us when we
 			ask for the tab's url (tab.url), and end-users don't really have access to this function.
 		*/
 

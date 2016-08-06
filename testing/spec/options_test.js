@@ -102,12 +102,60 @@ describe("the options page", function() {
 		});
 	});
 
+	describe("the removeProtocol function", function() {
+		/* 	Tests:
+			empty string - empty string
+			non-url string - non-url string
+			non-FQ url - non-FQ url
+			FQ url - non-FQ url
+			FQ url with path - non FQ url with path
+		*/
+		it("should return an empty string when given an empty string", function() {
+			var emptyString = '';
+
+			expect(removeProtocol(emptyString)).toBe(emptyString);
+		});
+
+		it("should return a non-URL string when given a non-URL string", function() {
+			var nonURL = 'wow, this really isnt a URL at all!';
+
+			expect(removeProtocol(nonURL)).toBe(nonURL);
+		});
+
+		it("should return a non-FQ url when given a non-FQ URL", function() {
+			var nonFQ = 'nickschorr.com';
+
+			expect(removeProtocol(nonFQ)).toBe(nonFQ);
+		});
+
+		it("should return a non-FQ URL when given an FQ URL", function() {
+			var FQ = 'http://nickschorr.com/';
+			var nonFQ = 'nickschorr.com/';
+
+			expect(removeProtocol(FQ)).toBe(nonFQ);
+		});
+
+		it("should return a non-FQ URL with a path when given an FQ URL with a path", function() {
+			var FQ = 'http://nickschorr.com/path/to/something/';
+			var nonFQ = 'nickschorr.com/path/to/something/';
+
+			expect(removeProtocol(FQ)).toBe(nonFQ);
+		});
+
+		it("should return a non-FQ URL with a subdomain when given an FQ URL with a subdomain", function() {
+			var FQ = 'http://test.nickschorr.com/';
+			var nonFQ = 'test.nickschorr.com/';
+
+			expect(removeProtocol(FQ)).toBe(nonFQ);
+		});
+	});
+
 	describe("the getSubdomainDifference function", function() {
 		/*	Tests:
 			empty source, empty destination - 0
-			FQ source with no subdomains, FQ destination with no subdomains - 0 <- FIX
-			FQ source with one subdomain, FQ destination with one subdomain - 0 <- FIX
-			FQ source with one subdomain, FQ destination with no subdomains - 0 <- FIX
+			FQ source with no subdomains, FQ destination with no subdomains - 0
+			FQ source with one subdomain, FQ destination with one subdomain - 0
+			FQ source with one subdomain, FQ destination with no subdomains - 1
 			source with no subdomains, destination with no subdomains - 0
 			source with one subdomain, destination with one subdomain - 0
 			source with one subdomain, destination with no subdomains - 1
@@ -120,16 +168,16 @@ describe("the options page", function() {
 			expect(getSubdomainDifference('','')).toBe(0);
 		});
 
-		it("should return 0 when given a fully qualified source and fully qualified destination with no subdomains", function() {
+		it("should return 0 when given a FQ source and FQ destination with no subdomains", function() {
 			expect(getSubdomainDifference('http://nickschorr.com/','http://nickschorr.com/')).toBe(0);
 		});
 
-		it("should return 0 when given a fully qualified source and fully qualified destination with one subdomain each", function() {
+		it("should return 0 when given a FQ source and FQ destination with one subdomain each", function() {
 			expect(getSubdomainDifference('http://one.nickschorr.com/','http://two.nickschorr.com/')).toBe(0);
 		});
 
-		it("should return 0 when given a fully qualified source with one subdomain and a fully qualified destination with no subdomains", function() {
-			expect(getSubdomainDifference('http://one.nickschorr.com/','http://nickschorr.com/')).toBe(0);
+		it("should return 0 when given a FQ source with one subdomain and a FQ destination with no subdomains", function() {
+			expect(getSubdomainDifference('http://one.nickschorr.com/','http://nickschorr.com/')).toBe(1);
 		});
 
 		it("should return 0 when given a source and destination with no subdomains", function() {
@@ -174,8 +222,9 @@ describe("the options page", function() {
 			// Tests the cycle checker (destination arg doesn't matter)
 			non-empty source, empty destination, rules array with matching non-empty source as the destination at the beginning - false
 			non-empty source, empty destination, rules array with matching non-empty source as the destination at the end - false
-			// Tests a valid input
+			// Tests valid input
 			non-empty source, non-empty destination, rules array without any duplicate sources and no destinations matching the non-empty source - true
+			non-empty source with one subdomain, non-empty destination with no subdomains, rules array without any duplicate sources and no destinations matching the non-empty source - true
 		*/
 		it("should return false for empty source, destination, and rules arguments", function() {
 			expect(isValidInput('','',[])).toBe(false);
@@ -242,5 +291,16 @@ describe("the options page", function() {
 
 			expect(isValidInput('nickschorr.com', 'nickschorr.com/test/', rules)).toBe(true);
 		});
+
+		it("should return true for a nonempty source with one subdomain and destination with no subdomains, the source doesn't have any matches in the rules array, and the source isn't already a destination", function() {
+			var rules = [
+				{src:"nickschorr.com/path/", dest:"nickschorr.com/path/test/"},
+				{src:"test.nickschorr.com/path/", dest:"test.nickschorr.com/path/test/"},
+				{src:"test.sub.nickschorr.com/", dest:"sub.nickschorr.com/test/path/"}
+			];
+
+			expect(isValidInput('one.nickschorr.com', 'nickschorr.com/test/', rules)).toBe(true);
+		});
+
 	});
 });

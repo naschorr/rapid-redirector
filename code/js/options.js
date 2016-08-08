@@ -87,12 +87,12 @@ function hasChars(string) {
  * @return {int|null} The integer representing the button's index in the rules table, or null if there isn't a valid index.
  */
 function getButtonIndex(buttonId) {
-	try{
+	try {
 		var index = parseInt(buttonId.match(/([0-9])+/)[0], 10);
 	}
 	catch (error){
 		if(error.name === 'TypeError') {
-			console.log('TypeError in getButtonIndex(). Arg: ${buttonId} Error: ', error);
+			console.error('TypeError in getButtonIndex(). Arg: ${buttonId} Error: ', error);
 			return null;
 		}
 	}
@@ -123,7 +123,7 @@ function removeProtocol(url) {
 	}
 	catch (error) {
 		if(error.name === 'TypeError') {
-			console.log(`TypeError in removeProtocol(). Arg: ${url}. Probably a url that doesn't have a protocol. Error: ${error}`)
+			console.error(`TypeError in removeProtocol(). Arg: ${url}. Probably a url that doesn't have a protocol. Error: ${error}`)
 			return url;
 		}
 	}
@@ -157,7 +157,7 @@ function showNotificationPopup(symbol, text, color, delay, callback) {
 
 	/* Callback is mostly to be used to call hideNotificationPopup(). Delay specifies a timer before calling the callback. */
 	if(callback) {
-		if(delay) {
+		if(delay != null) {
 			setTimeout(function() {
 				callback();
 			}, delay);

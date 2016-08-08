@@ -36,7 +36,7 @@ function isMobile(url) {
   }
   catch (error) {
     if(error.name === 'TypeError') {
-      console.log(`TypeError in isMobile(). Arg: ${url}. Error: {$error}`);
+      console.error(`TypeError in isMobile(). Arg: ${url}. Error: {$error}`);
       return null; 
     }
   }

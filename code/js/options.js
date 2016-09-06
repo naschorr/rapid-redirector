@@ -92,7 +92,7 @@ function getButtonIndex(buttonId) {
 	}
 	catch (error){
 		if(error.name === 'TypeError') {
-			console.error('TypeError in getButtonIndex(). Arg: ${buttonId} Error: ', error);
+			console.error(`TypeError in getButtonIndex(). Arg: "${buttonId}" Error: ', ${error}`);
 			return null;
 		}
 	}
@@ -113,20 +113,26 @@ function calcTimeToReadString(string) {
 }
 
 /**
- * Attempts to remove the protocol as well as leadingforward slashes from a URL.
- * @param {string} url - The url to (attempt to) remove the protocol and slashes from.
- * @return {string} url - The url with the protocol and slashes removed, or the url itself.
+ * Attempts to remove the protocol, leading forward slashes, and the path from a URL.
+ * @param {string} url - The url to (attempt to) remove the protocol and path from/
+ * @return {string} url - The resulting domain, or the url if a domain couldn't be found.
  */
-function removeProtocol(url) {
-	try {
-		return /\/\/(\S+)/i.exec(url)[1];
+function getDomain(url) {
+	/* Need to combine these regexs into one statement somehow */
+	var noProtocol = /\/\/(.+)/i.exec(url);
+	if(noProtocol) {
+		noProtocol = noProtocol[1];
+	}else{
+		noProtocol = url;
 	}
-	catch (error) {
-		if(error.name === 'TypeError') {
-			console.error(`TypeError in removeProtocol(). Arg: ${url}. Probably a url that doesn't have a protocol. Error: ${error}`)
-			return url;
-		}
+
+	var noPath = /(.+?)\//i.exec(noProtocol);
+	if(noPath) {
+		noPath = noPath[1];
+	}else{
+		noPath = url;
 	}
+	return noPath;
 }
 
 /**
@@ -134,7 +140,7 @@ function removeProtocol(url) {
  * @param {char|string} symbol - The string or character that's shown at the top of the popup. Often a unicode symbol relating to the nature of the popup.
  * @param {string} text - The main text shown to the user when the notification pops up. Often used to tell the user what went wrong.
  * @param {string} color - The name of a color (defined as a CSS class) that the notification should use as its background.
- * @param {int} delay - Time (in milliseconds) to wait before calling the callback function.
+ * @param {int} delay - Time (in milliseconds) to wait before calling the callback function. Null if a delay isn't necessary.
  * @param {function} callback - The function to be invoked either after the notification has been displayed, potentially after a delay. Mostly used to call the hideNotificationPopup function.
  */
 function showNotificationPopup(symbol, text, color, delay, callback) {
@@ -183,8 +189,8 @@ function hideNotificationPopup() {
  * @return {int} The difference in subdomain counts between the source and destination.
  */
 function getSubdomainDifference(source, destination) {
-	source = removeProtocol(source);
-	destination = removeProtocol(destination);
+	source = getDomain(source);
+	destination = getDomain(destination);
 
 	var longer;
 	var shorter;

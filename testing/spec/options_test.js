@@ -102,51 +102,60 @@ describe("the options page", function() {
 		});
 	});
 
-	describe("the removeProtocol function", function() {
+	describe("the getDomain function", function() {
 		/* 	Tests:
 			empty string - empty string
 			non-url string - non-url string
 			non-FQ url - non-FQ url
 			FQ url - non-FQ url
-			FQ url with path - non FQ url with path
+			FQ url with subdomain - non FQ url with subdomain
+			non-FQ url with path - non-FQ url
+			non-FQ url with one subdomain and path - non-FQ url with subdomain
 		*/
 		it("should return an empty string when given an empty string", function() {
 			var emptyString = '';
 
-			expect(removeProtocol(emptyString)).toBe(emptyString);
+			expect(getDomain(emptyString)).toBe(emptyString);
 		});
 
 		it("should return a non-URL string when given a non-URL string", function() {
 			var nonURL = 'wow, this really isnt a URL at all!';
 
-			expect(removeProtocol(nonURL)).toBe(nonURL);
+			expect(getDomain(nonURL)).toBe(nonURL);
 		});
 
 		it("should return a non-FQ url when given a non-FQ URL", function() {
 			var nonFQ = 'nickschorr.com';
 
-			expect(removeProtocol(nonFQ)).toBe(nonFQ);
+			expect(getDomain(nonFQ)).toBe(nonFQ);
 		});
 
 		it("should return a non-FQ URL when given an FQ URL", function() {
 			var FQ = 'http://nickschorr.com/';
-			var nonFQ = 'nickschorr.com/';
+			var nonFQ = 'nickschorr.com';
 
-			expect(removeProtocol(FQ)).toBe(nonFQ);
-		});
-
-		it("should return a non-FQ URL with a path when given an FQ URL with a path", function() {
-			var FQ = 'http://nickschorr.com/path/to/something/';
-			var nonFQ = 'nickschorr.com/path/to/something/';
-
-			expect(removeProtocol(FQ)).toBe(nonFQ);
+			expect(getDomain(FQ)).toBe(nonFQ);
 		});
 
 		it("should return a non-FQ URL with a subdomain when given an FQ URL with a subdomain", function() {
 			var FQ = 'http://test.nickschorr.com/';
-			var nonFQ = 'test.nickschorr.com/';
+			var nonFQ = 'test.nickschorr.com';
 
-			expect(removeProtocol(FQ)).toBe(nonFQ);
+			expect(getDomain(FQ)).toBe(nonFQ);
+		});
+
+		it("should return a non-FQ URL when given a non-FQ URL with a path", function() {
+			var withPath = 'nickschorr.com/test/path/to/nowhere/';
+			var withoutPath = 'nickschorr.com';
+
+			expect(getDomain(withPath)).toBe(withoutPath);
+		});
+
+		it("should return a non-FQ URL with a subdomain when given a non-FQ URL with a path and a subdomain", function() {
+			var withPath = 'test.nickschorr.com/test/path/to/nowhere/';
+			var withoutPath = 'test.nickschorr.com';
+
+			expect(getDomain(withPath)).toBe(withoutPath);
 		});
 	});
 
@@ -163,6 +172,8 @@ describe("the options page", function() {
 			source with three subdomains, destination with two of the same subdomains - 1
 			destination with three subdomains, source with two of the same subdomains - 1
 			source with five subdomains, destination with no subdomains - 5
+			FQ source with no subdomains and path, FQ destination with no subdomains, and different path - 0
+			FQ source with one subdomain and path, FQ destination with no subdomains, and different path - 1
 		*/
 		it("should return 0 when given an empty source and destination", function() {
 			expect(getSubdomainDifference('','')).toBe(0);
@@ -207,6 +218,14 @@ describe("the options page", function() {
 
 		it("should return 5 when given a source with five subdomains and destination with no subdomains", function() {
 			expect(getSubdomainDifference('one.two.three.four.five.nickschorr.com','nickschorr.com')).toBe(5);
+		});
+
+		it("should return 0 when given a FQ source with no subdomains and a path, and a FQ destination with no subdomains and a different path", function() {
+			expect(getSubdomainDifference('http://nickschorr.com/test/path/', 'http://nickschorr.com/path/test/')).toBe(0);
+		});
+
+		it("should return 1 when given a FQ source with one subdomain and a path, and a FQ destination with no subdomains and a different path", function() {
+			expect(getSubdomainDifference('http://one.nickschorr.com/test/path/', 'http://nickschorr.com/path/test/')).toBe(1);
 		});
 	});
 

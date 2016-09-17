@@ -50,15 +50,17 @@ body {
 
 .add-rule-text-container {
 	overflow: hidden;
-	height: 100%;
+	display: flex;
+	align-items: center;
+	height: 30px;
 }
 
 .half-text {
-	margin: 5px 5px 0 0;
+	margin-right: 5px;
 	color: var(--text-color);
-	width: 46%;
 	padding: 2px 5px;
 	display: inline-block;
+	flex-grow: 1;
 	border: none;
 	border-bottom: solid 2px var(--accent-color);
 	transition: border 0.25s;
@@ -71,8 +73,8 @@ body {
 }
 
 .add-rule-button-container {
-	width: auto;
-	height: 100%;
+	height: 30px;
+	margin-right: 5px;
 	float: right;
 }
 

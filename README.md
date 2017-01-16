@@ -8,8 +8,6 @@ However, since this won't cover all cases, the extension also allows you to crea
 ## Installation
 Just download and unzip the repo, navigate to chrome://extensions/, enable developer mode, and load the unpacked extension.
 
-Alternatively, open up your Chrome extension list, and then drag and drop the rFormula1-Sidebar-Spoiler-Stopper.crx file into the list. After that, it should be ready to go (temporarily).
-
 A proper Chrome Web Store release is coming soon!
 
 ## Usage

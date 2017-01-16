@@ -1,3 +1,8 @@
+/* Globals */
+var MOBILE_SUBDOMAINS = ['m', 'mobile'];
+var LAST_REDIRECTION_SOURCE = "";
+/* End Globals */
+
 /**
  * Checks if the URL can be found in the supplied set of redirection rules.
  * @param {string} url - The url to check.
@@ -28,8 +33,6 @@ function isMobile(url) {
     return null;
   }
 
-  var mobileSubdomains = ['m', 'mobile'];
-
   try {
     var domain = /\/\/(\S+?)\//.exec(url)[1];
     var domainTokens = domain.split('.');
@@ -47,8 +50,8 @@ function isMobile(url) {
   var mobileIndex = 0;
   var match = null;
   while(!match && domainIndex < domainTokens.length) {
-    while(!match && mobileIndex < mobileSubdomains.length) {
-      if(domainTokens[domainIndex] === mobileSubdomains[mobileIndex]) {
+    while(!match && mobileIndex < MOBILE_SUBDOMAINS.length) {
+      if(domainTokens[domainIndex] === MOBILE_SUBDOMAINS[mobileIndex]) {
         domainTokens.splice(domainIndex, 1);
         match = url.replace(domain, domainTokens.join('.'));
       }
@@ -64,14 +67,16 @@ function isMobile(url) {
 chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
   if (changeInfo.status == 'loading' && tab.active) {
     chrome.storage.sync.get({ redirection: 1  }, function(items) { // Default to redirection enabled.
-        /* Make sure that redirection is enabled */
-        if(items.redirection === 1) {
+        /* Make sure that redirection is enabled, and that the url we just redirected from isn't the same as the one we're redirecting to. 
+           This helps to prevent getting stuck in redirection loops, and losing control of the browser's back button. */
+        if(items.redirection === 1 && LAST_REDIRECTION_SOURCE != tab.url) {
           chrome.storage.sync.get("redirectionRules", function(result) {
             var rules = result.redirectionRules;
 
             /* Check and see if the url exists in the list of redirection rules */
             var redirectRuleMatch = isRedirectRule(tab.url, rules);
             if(redirectRuleMatch !== null) {
+              LAST_REDIRECTION_SOURCE = tab.url;
               chrome.tabs.update(tabId, {url: redirectRuleMatch});
               return;
             }
@@ -79,7 +84,9 @@ chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
             /* Check and see if the page is mobile */
             var mobileMatch = isMobile(tab.url);
             if(mobileMatch !== null) {
+              LAST_REDIRECTION_SOURCE = tab.url;
               chrome.tabs.update(tabId, {url: mobileMatch});
+              return;
             }
 
             /* Else do nothing */

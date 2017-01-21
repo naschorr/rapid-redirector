@@ -23,7 +23,7 @@ function dumpCurrentRules() {
 			console.log("Currently saved rules: ");
 
 			for(var i = 0; i < test.length; i++) {
-				console.log(`\t${test[i].src} -> ${test[i].dest}`);
+				console.log(`\t${test[i].src} -> ${test[i].dest} -- ${test[i].regex}`);
 			}
 		}else{
 			console.log("No saved rules available");
@@ -226,7 +226,7 @@ function getSubdomainDifference(source, destination) {
  * Determines if the proposed redirection rule is valid, and thus can be added to the array of active rules. Also alerts the user with a notification if the rule fails a test.
  * @param {string} source - The proposed domain to redirect from.
  * @param {string} destination - The proposed domain to redirect to.
- * @param {array} rules - Array of 'rules' objects to check against. {src:"Source", dest:"Destination"}
+ * @param {array} rules - Array of 'rules' objects to check against. {src:"source URL (or regex pattern)", dest:"destination URL", regex:boolean if .src is a regex}
  * @return {boolean} True if the proposed redirection rule passes the tests. False if it doesn't.
  */
 function isValidInput(source, destination, rules) {
@@ -267,21 +267,22 @@ function isValidInput(source, destination, rules) {
  * Stores a given source and destination domain into chrome's storage as a rule.
  * @param {string} source - The domain to redirect from.
  * @param {string} destination - The domain to redirect to.
+ * @param {boolean} isRegex - True if the rule uses regex, False if it doesn't.
  */
-function storeRule(source, destination) {
-	// Object format = {src:"source URL", dest:"destination URL"}
+function storeRule(source, destination, isRegex) {
+	// Object format = {src:"source URL (or regex pattern)", dest:"destination URL", regex:boolean if .src is a regex}
 	chrome.storage.sync.get("redirectionRules", function(result) {
 		var rules = result.redirectionRules || [];
 
 		if(isValidInput(source, destination, rules)) {
-			rules.push({src:source.trim(), dest:destination.trim()});
+			rules.push({src:source.trim(), dest:destination.trim(), regex:isRegex});
 
 			chrome.storage.sync.set({redirectionRules: rules}, function() {
-				debugLog(`Added new rule: '${source}' -> '${destination}'`);
+				debugLog(`Added new rule: '${source}' -> '${destination}', regex: ${isRegex}`);
 				updateRulesTable();
 			})
 		}else{
-			debugLog(`Failed to add rule: '${source}' -> '${destination}'. Rule is either empty, a duplicate, or produces a cycle.`);
+			debugLog(`Failed to add rule: '${source}' -> '${destination}', regex: ${isRegex}. Rule is either empty, a duplicate, or produces a cycle.`);
 		}
 	})
 }
@@ -402,22 +403,34 @@ function loadLocalizedText() {
 	document.getElementById('addRuleMobile').placeholder = chrome.i18n.getMessage('options_new_source_placeholder');
 	document.getElementById('addRuleDesktop').placeholder = chrome.i18n.getMessage('options_new_destination_placeholder');
 	document.getElementById('addRuleConfirm').value = chrome.i18n.getMessage('options_add_rule_button');
+	document.getElementById('addRuleOrRegexText').innerHTML = chrome.i18n.getMessage('options_add_rule_or_regex');
+	document.getElementById('addRegexConfirm').value = chrome.i18n.getMessage('options_add_regex_button');
 }
 /* End Methods */
 
 /* Listener Init */
 document.addEventListener('DOMContentLoaded', buildRulesTable());
 
+var mobileInputElement = document.getElementById('addRuleMobile');
+var desktopInputElement = document.getElementById('addRuleDesktop');
+
 var addRuleBtn = document.getElementById('addRuleConfirm');
 addRuleBtn.addEventListener('click', function() {
-	var mobileInputElement = document.getElementById('addRuleMobile');
-	var desktopInputElement = document.getElementById('addRuleDesktop');
 	/* Store the rule */
-	storeRule(mobileInputElement.value, desktopInputElement.value);
+	storeRule(mobileInputElement.value, desktopInputElement.value, false);
 	/* Clear the input box's text */
 	mobileInputElement.value = '';
 	desktopInputElement.value = '';
 });
+
+var addRegexBtn = document.getElementById('addRegexConfirm');
+addRegexBtn.addEventListener('click', function() {
+	/* Store the rule */
+	storeRule(mobileInputElement.value, desktopInputElement.value, true);
+	/* Clear the input box's text */
+	mobileInputElement.value = '';
+	desktopInputElement.value = '';
+})
 /* End Listener Init */
 
 /* Localization Init */

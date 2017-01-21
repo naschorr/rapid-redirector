@@ -55,8 +55,18 @@
 	},
 
 	"options_add_rule_button": {
-		"message": "Add",
+		"message": "Add Rule",
 		"description": "Text that shows up on the button for adding a new rule."
+	},
+
+	"options_add_rule_or_regex": {
+		"message": "or",
+		"description": "Text that shows up between the 'Add Rule' and 'Add Regex' buttons."
+	},
+
+	"options_add_regex_button": {
+		"message": "Add Regex",
+		"description": "Text that shows up on the button for adding a new rule that uses regex."
 	},
 
 	"options_new_source_placeholder": {

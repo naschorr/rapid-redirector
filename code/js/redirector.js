@@ -1,17 +1,68 @@
 /* Globals */
 const MOBILE_SUBDOMAINS = ['m', 'mobile'];
 var lastRedirectionSource = "";
-var regexLookup = {}; // Note that pairs aren't being deleted from this dict when they're removed from the rules array. TODO: fix this.
 /* End Globals */
+
+/**
+ * Class that handles storage and error handling of RegExp objects to be used during page redirection.
+ */
+class RegexLookup {
+  /**
+   * Create a private lookup dictionary.
+   */
+  constructor() {
+    this._lookup = {};
+  }
+
+  /**
+   * Add a key, generate its RegExp, and insert into the lookup dict.
+   * @param {string} key - The key for the lookup dict.
+   */
+  add(key) {
+    if(!(key instanceof String)) {
+      key = String(key);
+    }
+
+    this._lookup[key] = new RegExp(key);
+    // catch bad RegExp instantiation attempt here? Is that even a thing? RegExp is pretty flexible in what it can take for a pattern.
+  }
+
+  /**
+   * Get a stored RegExp with a key if it exists. If not, create a new RegExp with the supplied key.
+   * @param {string} key - The key to get the stored RegExp for.
+   * @return {RegExp} The stored RegExp found at the key.
+   */
+  get(key) {
+    if(key in this._lookup) {
+      return this._lookup[key];
+    }
+    else{
+      console.log(`Key: '${key}' not found. Constructing and returning its RegExp now.`);
+      this.add(key);
+      return this.get(key);
+    }
+  }
+
+  /**
+   * Removes a key:regex pair from the lookup dict.
+   * @param {string} key - The key of the key:regex pair to be removed.
+   */
+  remove(key) {
+    delete this._lookup[key] ;
+  }
+}
 
 /**
  * Checks if the URL can be found in the supplied set of redirection rules.
  * @param {string} url - The url to check.
  * @param {array} rules - Array of 'rules' objects to check against. {src:"source URL (or regex pattern)", dest:"destination URL", regex:boolean if .src is a regex}
  * @return {string|null} String containing the newly redirected URL. Null if a redirection doesn't exist.
- * TODO build an error handler to handle these and any other errors that might occur.
  */
 function isRedirectRule(url, rules) {
+  if(!url) {
+    return null;
+  }
+
   var match = null;
   var index = 0;
 
@@ -19,22 +70,10 @@ function isRedirectRule(url, rules) {
     var rule = rules[index];
 
     if(rule.regex) {
-      try {
-        var result = regexLookup[rule.src].exec(url);
-        if(result) {
-          // Build extension onto string class for string insertions/removals? Maybe a utilities script to load with the other scripts in this extension?
-          match = url.substr(0, result.index) + rule.dest + url.substr(result.index + result[0].length);
-        }
-      }
-      catch(e){
-        if(e instanceof TypeError) {
-          console.log(e, '\n', "Probably from a new regex rule not present in the regexpLookup. Adding it now...");
-          regexLookup[rule.src] = RegExp(rule.src);
-          continue;
-        }else{
-          console.log(e, '\n', "Unhandled error in isRedirectRule's regex rule checker. Returning null.");
-          break;
-        }
+      var result = regexLookup.get(rule.src).exec(url);
+      if(result) {
+        // Build extension onto string class for string insertions/removals? Maybe a utilities script to load with the other scripts in this extension?
+        match = url.substr(0, result.index) + rule.dest + url.substr(result.index + result[0].length);
       }
     }else{
       var attempt = url.replace(rules[index].src, rules[index].dest);
@@ -45,6 +84,7 @@ function isRedirectRule(url, rules) {
 
     index++;
   }
+
   return match;
 }
 
@@ -63,7 +103,7 @@ function isMobile(url) {
     var domainTokens = domain.split('.');
   }
   catch (error) {
-    if(error.name === 'TypeError') {
+    if(error instanceof TypeError) {
       console.error(`TypeError in isMobile(). Arg: "${url}". Error: ${error}`);
       return null; 
     }
@@ -85,23 +125,33 @@ function isMobile(url) {
     domainIndex++;
     mobileIndex = 0;
   }
+
   return match;
 }
 
 /**
- * Populates the regex lookup dictionary with a set of {src:RegExp} pairs for every redirection rule that uses regex.
+ * Builds and populates the regex lookup dictionary with a set of {src:RegExp} pairs for every redirection rule that uses regex.
+ * @return {.RegexLookup} RegexLookup object containing the list of rules that use regex.
  */
-function populateRegexLookup() {
+function generateRegexLookup() {
+  var regexLookup = new RegexLookup();
+
   chrome.storage.sync.get("redirectionRules", function(result) {
     result.redirectionRules.forEach(function(rule) {
       if(rule.regex) {
-        regexLookup[rule.src] = RegExp(rule.src);
+        regexLookup.add(rule.src);
       }
     });
-  })
+  });
+  
+  return regexLookup;
 }
 
+/* Generate the regex lookup on startup */
+var regexLookup = generateRegexLookup(); // Note that pairs aren't being deleted from this when they're removed from the rules array. TODO: fix this.
+
 /* Listener Init */
+// Consider changine to event filters -- https://developer.chrome.com/extensions/event_pages#best-practices #4
 chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
   /* Make sure that redirection is enabled, and that the url we just redirected from isn't the same as the one we're redirecting to. 
      This helps to prevent getting stuck in redirection loops, and losing control of the browser's back button. */
@@ -128,12 +178,18 @@ chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
             }
 
             /* Else do nothing */
-          })
+          });
         }
-    })
+    });
   }
-})
-/* End Listener Init */
+});
 
-/* Populate the regexLookup dict on startup */
-populateRegexLookup();
+chrome.runtime.onMessage.addListener(function(request) {
+  if(request.deleteRule) {
+    regexLookup.remove(request.deleteRule);
+  }
+  else if(request.addRule) {
+    regexLookup.add(request.addRule);
+  }
+});
+/* End Listener Init */

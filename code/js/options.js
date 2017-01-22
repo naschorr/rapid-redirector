@@ -11,51 +11,6 @@ var SUCCESS_SYMBOL = '\u2713';
 
 /* Note: 'Rule' refers to the combination of the source and destination domains. */
 
-/* Debug helpers */
-/** 
- * @ignore
- * Outputs the currently saved redirection rules to the console.
- */
-function dumpCurrentRules() {
-	chrome.storage.sync.get("redirectionRules", function(out) {
-		var test = out.redirectionRules || [];
-		if(test.length > 0) {
-			console.log("Currently saved rules: ");
-
-			for(var i = 0; i < test.length; i++) {
-				console.log(`\t${test[i].src} -> ${test[i].dest} -- ${test[i].regex}`);
-			}
-		}else{
-			console.log("No saved rules available");
-		}
-	})
-}
-
-/** 
- * @ignore
- * Deletes all saved redirection rules.
- */
-function clearRules() {
-	chrome.storage.sync.set({redirectionRules: []}, function() {
-		console.log('Redirection rules cleared');
-		dumpCurrentRules();
-	})
-}
-
-/** 
- * @ignore 
- * Debugging wrapper for console.log(), where messages only get output if debug mode is enabled (debugging = true;)
- */
-function debugLog(output) {
-	var debugging = false;
-
-	if(debugging) {
-		console.log(output);
-		dumpCurrentRules();
-	}
-}
-/* End debug helpers */
-
 /* Methods */
 /**
  * Determines if a given object has the specified key and if the object has the given key, value pair.
@@ -91,7 +46,7 @@ function getButtonIndex(buttonId) {
 		var index = parseInt(buttonId.match(/([0-9])+/)[0], 10);
 	}
 	catch (error){
-		if(error.name === 'TypeError') {
+		if(error instanceof TypeError) {
 			console.error(`TypeError in getButtonIndex(). Arg: "${buttonId}" Error: ', ${error}`);
 			return null;
 		}
@@ -259,7 +214,7 @@ function isValidInput(source, destination, rules) {
 	if(getSubdomainDifference(source, destination) > 0) {
 		showNotificationPopup(SUCCESS_SYMBOL, MISMATCHED_SUBDOMAINS_TEXT, 'green', calcTimeToReadString(MISMATCHED_SUBDOMAINS_TEXT), hideNotificationPopup);
 	}
-
+	
 	return true;
 }
 
@@ -275,9 +230,11 @@ function storeRule(source, destination, isRegex) {
 		var rules = result.redirectionRules || [];
 
 		if(isValidInput(source, destination, rules)) {
-			rules.push({src:source.trim(), dest:destination.trim(), regex:isRegex});
+			source = source.trim();
+			rules.push({src:source, dest:destination.trim(), regex:isRegex});
 
 			chrome.storage.sync.set({redirectionRules: rules}, function() {
+				chrome.runtime.sendMessage({addRule: source});
 				debugLog(`Added new rule: '${source}' -> '${destination}', regex: ${isRegex}`);
 				updateRulesTable();
 			})
@@ -302,9 +259,10 @@ function deleteRule(buttonId) {
 
 	chrome.storage.sync.get("redirectionRules", function(result) {
 		var rules = result.redirectionRules || [];
-		rules.splice(buttonIndex, 1);
+		var removed = rules.splice(buttonIndex, 1)[0];
 
 		chrome.storage.sync.set({redirectionRules: rules}, function() {
+			chrome.runtime.sendMessage({deleteRule: removed.src});
 			debugLog(`Rule associated with ${buttonId} has been deleted`);
 			updateRulesTable();
 		})

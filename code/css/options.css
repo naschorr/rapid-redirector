@@ -41,7 +41,7 @@ body {
 	overflow: auto;
 }
 
-.add-rule-status {
+.info-text {
 	padding: 5px;
 	color: var(--dark-text-color);
 	border: none;
@@ -79,13 +79,6 @@ body {
 
 .current-rules-container {
 	padding: 5px;
-}
-
-.current-rules-status {
-	padding: 5px;
-	color: var(--dark-text-color);
-	border: none;
-	font-style: italic;
 }
 
 table {

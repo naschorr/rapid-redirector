@@ -10,7 +10,7 @@ body {
 .logo-text {
 	font-style: italic;
 	display: table-row;
-	color: var(--accent-color);
+	color: var(--light-text-color);
 	width: 100%;
 }
 

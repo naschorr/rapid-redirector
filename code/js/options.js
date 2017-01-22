@@ -214,7 +214,7 @@ function isValidInput(source, destination, rules) {
 	if(getSubdomainDifference(source, destination) > 0) {
 		showNotificationPopup(SUCCESS_SYMBOL, MISMATCHED_SUBDOMAINS_TEXT, 'green', calcTimeToReadString(MISMATCHED_SUBDOMAINS_TEXT), hideNotificationPopup);
 	}
-	
+
 	return true;
 }
 
@@ -288,7 +288,7 @@ function buildRulesTable() {
 		var rules = result.redirectionRules || [];
 		var ruleCount = rules.length;
 
-		if(rules.length > 0) {
+		if(ruleCount > 0) {
 			var tableContainer = document.getElementById('currentRulesTableContainer');
 			document.getElementById('currentRulesStatus').innerHTML = CURRENT_RULES_TEXT;
 
@@ -305,17 +305,23 @@ function buildRulesTable() {
 				var arrow = tr.insertCell();
 				var span = document.createElement('span');
 				span.className = 'arrow';
+				if(rules[row].regex) {
+					span.classList.add("regex-rule");
+				}
 				span.appendChild(document.createTextNode('\u2192'));
 				arrow.appendChild(span);
+
+
 
 				var destination = tr.insertCell();
 				destination.appendChild(document.createTextNode(rules[row].dest));
 
 				var button = tr.insertCell();
-				var buttonTextNode = document.createTextNode('\u232b');
+				var buttonTextNode = document.createTextNode('\u2326');
 				var buttonElement = document.createElement('BUTTON');
 				buttonElement.appendChild(buttonTextNode);
 				buttonElement.className = "delete-rule-button";
+				buttonElement.classList.add("flip-text");
 				buttonElement.id = `deleteRuleButton-${row}`;
 				button.appendChild(buttonElement);
 			}

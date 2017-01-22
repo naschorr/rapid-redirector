@@ -43,7 +43,7 @@ body {
 
 .add-rule-status {
 	padding: 5px;
-	color: var(--text-color);
+	color: var(--dark-text-color);
 	border: none;
 	font-style: italic;
 }
@@ -57,7 +57,7 @@ body {
 
 .half-text {
 	margin-right: 5px;
-	color: var(--text-color);
+	color: var(--dark-text-color);
 	padding: 2px 5px;
 	display: inline-block;
 	flex-grow: 1;
@@ -83,7 +83,7 @@ body {
 
 .current-rules-status {
 	padding: 5px;
-	color: var(--text-color);
+	color: var(--dark-text-color);
 	border: none;
 	font-style: italic;
 }
@@ -96,7 +96,7 @@ table {
 td {
 	padding: 2.5px 5px;
 	text-align: left;
-	color: var(--text-color);
+	color: var(--dark-text-color);
 	margin: auto;
 	max-width: 250px;	/* Depends on body width */
 	overflow: hidden;
@@ -118,6 +118,10 @@ tr:hover {
 
 .arrow {
 	font-size: 175%;
+}
+
+.arrow.regex-rule {
+	color: var(--main-color);
 }
 
 .delete-rule-button {

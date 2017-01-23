@@ -5,7 +5,7 @@
 	},
 
 	"description": {
-		"message": "Automatically redirects certain mobile web pages to their desktop version, and allows custom redirection rules.",
+		"message": "Automatically redirects certain mobile web pages to their desktop version, and allows custom redirections based on text replacement and regular expressions.",
 		"description": "Extension description"
 	},
 

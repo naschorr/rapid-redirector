@@ -48,7 +48,7 @@ class RegexLookup {
    * @param {string} key - The key of the key:regex pair to be removed.
    */
   remove(key) {
-    delete this._lookup[key] ;
+    delete this._lookup[key];
   }
 }
 

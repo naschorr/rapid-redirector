@@ -17,7 +17,7 @@
 
   "browser_action": {
     "default_icon": "images/icon_38.png",
-    "default_title": "Immobile",
+    "default_title": "__MSG_name__",
     "default_popup": "html/popup.html"
   },
 

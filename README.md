@@ -40,7 +40,7 @@ Warnings will look like this, and have some text telling you what's happened, an
 However, you may also see alerts like this:
 <p align="center"><img src="https://raw.githubusercontent.com/naschorr/Immobile/master/resources/alert.png"/></p>
 
-This simply means that while your rule is valid, it may have some issues later on. In this case, the differing subdomains in the amazon.com -> smile.amazon.com rule will lead to a failed redirection, since the end result after substituting and redirecting would be 'www.smile.amazon.com.' This is easily fixed by adding the 'www' subdomain to 'amazon.com.'
+This simply means that while your rule is valid, it may have some issues later on. For example, the differing subdomains in the amazon.com -> smile.amazon.com rule will lead to a failed redirection, since the end result after substituting and redirecting would be 'www.smile.amazon.com.' This is easily fixed by adding the 'www' subdomain to 'amazon.com.'
 
 If you ever need to delete a rule, you can just hit the delete button (⌫) to the right of the rule, as seen here:
 <p align="center"><img src="https://raw.githubusercontent.com/naschorr/Immobile/master/resources/deletion.png"/></p>

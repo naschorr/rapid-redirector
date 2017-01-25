@@ -5,6 +5,7 @@ var NO_EMPTY_TEXT = chrome.i18n.getMessage('options_no_empty_rule_string');
 var NO_DUPS_TEXT = chrome.i18n.getMessage('options_no_duplicates_string');
 var NO_CYCLES_TEXT = chrome.i18n.getMessage('options_no_cycles_string');
 var MISMATCHED_SUBDOMAINS_TEXT = chrome.i18n.getMessage('options_mismatched_subdomains_string');
+var MISMATCHED_PROTOCOLS_TEXT = chrome.i18n.getMessage('options_mismatched_protocols_string');
 var WARNING_SYMBOL = '\u26a0';
 var SUCCESS_SYMBOL = '\u2713';
 /* End Globals */
@@ -143,7 +144,7 @@ function hideNotificationPopup() {
  * @param {string} destination - The domain to redirect to.
  * @return {int} The difference in subdomain counts between the source and destination.
  */
-function getSubdomainDifference(source, destination) {
+function calcSubdomainDifference(source, destination) {
 	source = getDomain(source);
 	destination = getDomain(destination);
 
@@ -175,6 +176,24 @@ function getSubdomainDifference(source, destination) {
 	}
 
 	return periodCounter;
+}
+
+/**
+ * Determines if the suplied URLs both either have or don't have protocols.
+ * @param {string} source - The source URL.
+ * @param {string} destination - The destination URL.
+ * @return {boolean} True if both the source and destination URLs either have or don't have a protocol. False if one has a protocol and the other doesn't.
+ * TODO add tests for this function to the spec.
+ */
+function hasMismatchedProtocol(source, destination) {
+	var protocolRegex = new RegExp("^.+?:\/\/");
+
+	if(protocolRegex.test(source) === protocolRegex.test(destination)) {
+		return false;
+	}
+	else {
+		return true;
+	}
 }
 
 /**
@@ -211,8 +230,16 @@ function isValidInput(source, destination, rules) {
 		Could still be a valid rule, but alert users to potential issues with their source and destination subdomain counts. 
 		(ex. amazon.com -> smile.amazon.com won't work, but www.amazon.com -> smile.amazon.com will work.) 
 	*/
-	if(getSubdomainDifference(source, destination) > 0) {
+	if(calcSubdomainDifference(source, destination) > 0) {
 		showNotificationPopup(SUCCESS_SYMBOL, MISMATCHED_SUBDOMAINS_TEXT, 'green', calcTimeToReadString(MISMATCHED_SUBDOMAINS_TEXT), hideNotificationPopup);
+	}
+
+	/*
+		Again, could still work out, but check if both the source and destination both either have or don't have a protocol section in the url.
+		(ex. chrome://newtab -> reddit.com won't work, but chrome://newtab -> https://reddit.com will work.)
+	*/
+	if(hasMismatchedProtocol(source, destination)) {
+		showNotificationPopup(SUCCESS_SYMBOL, MISMATCHED_PROTOCOLS_TEXT, 'green', calcTimeToReadString(MISMATCHED_PROTOCOLS_TEXT), hideNotificationPopup);
 	}
 
 	return true;
@@ -235,13 +262,13 @@ function storeRule(source, destination, isRegex) {
 
 			chrome.storage.sync.set({redirectionRules: rules}, function() {
 				chrome.runtime.sendMessage({addRule: source});
-				debugLog(`Added new rule: '${source}' -> '${destination}', regex: ${isRegex}`);
+				Utilities.debugLog(`Added new rule: '${source}' -> '${destination}', regex: ${isRegex}`);
 				updateRulesTable();
 			})
 		}else{
-			debugLog(`Failed to add rule: '${source}' -> '${destination}', regex: ${isRegex}. Rule is either empty, a duplicate, or produces a cycle.`);
+			Utilities.debugLog(`Failed to add rule: '${source}' -> '${destination}', regex: ${isRegex}. Rule is either empty, a duplicate, or produces a cycle.`);
 		}
-	})
+	});
 }
 
 /**
@@ -253,7 +280,7 @@ function deleteRule(buttonId) {
 
 	/* Make sure that there is a legitimate index to delete with */
 	if(buttonIndex === null) {
-		debugLog(`Invalid button index from button: ${buttonId}`);
+		Utilities.debugLog(`Invalid button index from button: ${buttonId}`);
 		return;
 	}
 
@@ -263,10 +290,10 @@ function deleteRule(buttonId) {
 
 		chrome.storage.sync.set({redirectionRules: rules}, function() {
 			chrome.runtime.sendMessage({deleteRule: removed.src});
-			debugLog(`Rule associated with ${buttonId} has been deleted`);
+			Utilities.debugLog(`Rule associated with ${buttonId} has been deleted`);
 			updateRulesTable();
-		})
-	})
+		});
+	});
 }
 
 /**
@@ -275,7 +302,7 @@ function deleteRule(buttonId) {
  */
 function addBtnListener(buttonId) {
 	document.getElementById(buttonId).addEventListener('click', function() {
-		debugLog(`listener triggered for ${buttonId}`);
+		Utilities.debugLog(`listener triggered for ${buttonId}`);
 		deleteRule(buttonId);
 	})
 }
@@ -311,8 +338,6 @@ function buildRulesTable() {
 				span.appendChild(document.createTextNode('\u2192'));
 				arrow.appendChild(span);
 
-
-
 				var destination = tr.insertCell();
 				destination.appendChild(document.createTextNode(rules[row].dest));
 
@@ -335,7 +360,7 @@ function buildRulesTable() {
 		}else{
 			document.getElementById('currentRulesStatus').innerHTML = NO_RULES_TEXT;
 		}
-	})
+	});
 }
 
 /**
@@ -394,7 +419,7 @@ addRegexBtn.addEventListener('click', function() {
 	/* Clear the input box's text */
 	mobileInputElement.value = '';
 	desktopInputElement.value = '';
-})
+});
 /* End Listener Init */
 
 /* Localization Init */

@@ -60,8 +60,7 @@ var toggleRedirectionBtn = document.getElementById('toggleRedirection');
 var subTextElement = document.getElementById('subText');
 toggleRedirectionBtn.addEventListener('click', function() {
 	chrome.storage.sync.get({redirection: 1}, function(result) {
-		var redirectionState = result.redirection;
-		saveRedirectionState(redirectionState ^= 1);
+		saveRedirectionState(result.redirection ^= 1);
 	})
 });
 

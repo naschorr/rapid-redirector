@@ -1,6 +1,7 @@
 /* Globals */
 const MOBILE_SUBDOMAINS = ['m', 'mobile'];
-var lastRedirectionSource = "";
+var lastRedirectionSource;
+var regexLookup;
 /* End Globals */
 
 /**
@@ -37,7 +38,7 @@ class RegexLookup {
       return this._lookup[key];
     }
     else{
-      console.log(`Key: '${key}' not found. Constructing and returning its RegExp now.`);
+      Utilities.debugLog(`Key: '${key}' not found. Constructing and returning its RegExp now.`);
       this.add(key);
       return this.get(key);
     }
@@ -65,24 +66,24 @@ function isRedirectRule(url, rules) {
 
   var match = null;
   var index = 0;
+  var newUrl;
 
   while(!match && index < rules.length) {
-    var rule = rules[index];
+    let rule = rules[index];
 
     if(rule.regex) {
-      var result = regexLookup.get(rule.src).exec(url);
+      let result = regexLookup.get(rule.src).exec(url);
       if(result) {
-        // Build extension onto string class for string insertions/removals? Maybe a utilities script to load with the other scripts in this extension?
-        match = url.substr(0, result.index) + rule.dest + url.substr(result.index + result[0].length);
+        newUrl = url.antiSlice(result.index, result.index + result[0].length - 1).insertAt(rule.dest, result.index);
       }
     }else{
-      var attempt = url.replace(rules[index].src, rules[index].dest);
-      if(url !== attempt) {
-        match = attempt;
-      }
+      newUrl = url.replace(rules[index].src, rules[index].dest);
     }
-
     index++;
+  }
+
+  if(newUrl !== url) {
+    match = newUrl;
   }
 
   return match;
@@ -102,15 +103,20 @@ function isMobile(url) {
     var domain = /\/\/(\S+?)\//.exec(url)[1];
     var domainTokens = domain.split('.');
   }
-  catch (error) {
-    if(error instanceof TypeError) {
-      console.error(`TypeError in isMobile(). Arg: "${url}". Error: ${error}`);
-      return null; 
+  catch (e) {
+    if(e instanceof TypeError) {
+      console.error(e, '\n', `TypeError in isMobile(). Arg: "${url}". Error: ${e}`);
     }
+    else{
+      console.error(e, '\n', `Unhandled error in isMobile(). Arg: "${url}". Error: ${e}`);
+    }
+    return null;
   }
 
-  /* Basically, just loop through the array of domain tokens and check each mobile subdomain against it.
-     If a match is found, stop the loop, and replace the url's domain with the new non-mobile one. Theres probaby a better way to do this. */
+  /* 
+    Basically, just loop through the array of domain tokens and check each mobile subdomain against it.
+    If a match is found, stop the loop, and replace the url's domain with the new non-mobile one. Theres probaby a better way to do this.
+  */
   var domainIndex = 0;
   var mobileIndex = 0;
   var match = null;
@@ -148,21 +154,24 @@ function generateRegexLookup() {
 }
 
 /* Generate the regex lookup on startup */
-var regexLookup = generateRegexLookup(); // Note that pairs aren't being deleted from this when they're removed from the rules array. TODO: fix this.
+regexLookup = generateRegexLookup();
 
 /* Listener Init */
-// Consider changine to event filters -- https://developer.chrome.com/extensions/event_pages#best-practices #4
+// Consider changing to event filters -- https://developer.chrome.com/extensions/event_pages#best-practices #4
 chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
-  /* Make sure that redirection is enabled, and that the url we just redirected from isn't the same as the one we're redirecting to. 
-     This helps to prevent getting stuck in redirection loops, and losing control of the browser's back button. */
+  /* 
+    Make sure that redirection is enabled, and that the url we just redirected from isn't the same as the one we're redirecting to. 
+    This helps to prevent getting stuck in redirection loops, and losing control of the browser's back button.
+    TODO: Start tracking lastRedirectionSource independently for each tab instead of doing it globally.
+  */
   if (changeInfo.status == 'loading' && lastRedirectionSource != tab.url) {
     chrome.storage.sync.get({ redirection: 1 }, function(items) { // Default to redirection enabled.
         if(items.redirection === 1) {
           chrome.storage.sync.get("redirectionRules", function(result) {
-            var rules = result.redirectionRules;
+            let rules = result.redirectionRules;
 
             /* Check and see if the url exists in the list of redirection rules */
-            var redirectRuleMatch = isRedirectRule(tab.url, rules);
+            let redirectRuleMatch = isRedirectRule(tab.url, rules);
             if(redirectRuleMatch) {
               lastRedirectionSource = tab.url;
               chrome.tabs.update(tabId, {url: redirectRuleMatch});
@@ -170,7 +179,7 @@ chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
             }
 
             /* Check and see if the page is mobile */
-            var mobileMatch = isMobile(tab.url);
+            let mobileMatch = isMobile(tab.url);
             if(mobileMatch) {
               lastRedirectionSource = tab.url;
               chrome.tabs.update(tabId, {url: mobileMatch});

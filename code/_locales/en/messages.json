@@ -107,5 +107,10 @@
 	"options_mismatched_subdomains_string": {
 		"message": "Success. However, there may be issues due to a potentially unequal number of subdomains.",
 		"description": "Alert string to let the user know that they may run into issues by having a different number of subdomains in each side of their rule. (ex. amazon.com -> smile.amazon.com won't work.)"
+	},
+
+	"options_mismatched_protocols_string": {
+		"message": "Success. However, there may be issues due to one of the addresses having a protocol, and the other not having one.",
+		"description": "Alert string to let the user know that they may run into issues by because one of the addresses has a protocol and the other doesn't. (ex. chrome://newtab -> reddit.com won't work, but chrome://newtab -> https://reddit.com will work.)"
 	}
 }

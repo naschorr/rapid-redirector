@@ -1,5 +1,7 @@
 /* Globals */
 let debugMode = false;
+const BROWSER_ACTION_ACTIVE_ICON_PATH = "../images/icon_38.png";
+const BROWSER_ACTION_INACTIVE_ICON_PATH = "../images/icon_inactive_38.png";
 /* End Globals */
 
 /**
@@ -59,6 +61,18 @@ class Utilities {
 	 */
 	static disableDebugging() {
 		debugMode = false;
+	}
+
+	/**
+	 * Update the extension's browserAction icon.
+	 * @param {int} state - The current redirection state of the extension (0 = Disabled, 1 = Enabled).
+	 */
+	static updateBrowserActionIcon(state) {
+		let iconPath = (state === 1) ? BROWSER_ACTION_ACTIVE_ICON_PATH : BROWSER_ACTION_INACTIVE_ICON_PATH;
+
+		chrome.browserAction.setIcon({
+			path: {"38": `${iconPath}`}
+	    });
 	}
 }
 

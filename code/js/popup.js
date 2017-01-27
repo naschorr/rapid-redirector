@@ -1,4 +1,5 @@
 /* Globals */
+const POPUP_DESC_WAIT_TIME = 2000;
 var ENABLED_TEXT = chrome.i18n.getMessage('popup_enabled_string');
 var DISABLED_TEXT = chrome.i18n.getMessage('popup_disabled_string');
 var ENABLE_TEXT = chrome.i18n.getMessage('popup_enable_string');
@@ -12,13 +13,28 @@ var POPUP_DESC = chrome.i18n.getMessage('popup_description');
  *  @param {int} state - The current redirection state of the extension (0 = Disabled, 1 = Enabled).
  */
 function updatePopupAfterStateSaved(state) {
+	
+	let redirectionStateText;
+	let redirectionBtnValue;
+
+	if(state === 0) {
+		redirectionStateText = DISABLED_TEXT;
+		redirectionBtnValue = ENABLE_TEXT;
+
+	}
+	else{
+		redirectionStateText = ENABLED_TEXT;
+		redirectionBtnValue = DISABLE_TEXT;
+	}
+
 	/* subText and toggleRedirectionBtn defined with the listeners */
-	var redirectionStateText = (state === 0) ? DISABLED_TEXT : ENABLED_TEXT;
+	Utilities.updateBrowserActionIcon(state);
 	subText.textContent = `Redirection is now ${redirectionStateText}.`;
-	toggleRedirectionBtn.value = (state === 0) ? ENABLE_TEXT : DISABLE_TEXT;
+	toggleRedirectionBtn.value = redirectionBtnValue;
+
 	setTimeout(function() {
 		subTextElement.textContent = POPUP_DESC;
-	}, 2000);
+	}, POPUP_DESC_WAIT_TIME);
 }
 
 /**

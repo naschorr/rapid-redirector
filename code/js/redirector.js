@@ -158,14 +158,14 @@ regexLookup = generateRegexLookup();
 
 /* Listener Init */
 // Consider changing to event filters -- https://developer.chrome.com/extensions/event_pages#best-practices #4
-chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
   /* 
     Make sure that redirection is enabled, and that the url we just redirected from isn't the same as the one we're redirecting to. 
     This helps to prevent getting stuck in redirection loops, and losing control of the browser's back button.
     TODO: Start tracking lastRedirectionSource independently for each tab instead of doing it globally.
   */
   if (changeInfo.status == 'loading' && lastRedirectionSource != tab.url) {
-    chrome.storage.sync.get({ redirection: 1 }, function(items) { // Default to redirection enabled.
+    chrome.storage.sync.get({redirection: 1}, function(items) { // Default to redirection enabled.
         if(items.redirection === 1) {
           chrome.storage.sync.get("redirectionRules", function(result) {
             let rules = result.redirectionRules;
@@ -202,3 +202,10 @@ chrome.runtime.onMessage.addListener(function(request) {
   }
 });
 /* End Listener Init */
+
+/* Set the browser action icon to the inactive version if necessary */
+chrome.storage.sync.get({redirection: 1}, function(result) { // Default to redirection enabled
+  if(result.redirection === 0) {
+    Utilities.updateBrowserActionIcon(0);
+  }
+});

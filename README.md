@@ -11,7 +11,7 @@ Just download and unzip the repo, navigate to chrome://extensions/, enable devel
 A proper Chrome Web Store release is coming soon!
 
 ## Usage
-After installation, clicking on the icon ![Extension icon active][small icon active](https://raw.githubusercontent.com/naschorr/Immobile/master/code/images/icon_16.png) will bring up a popup interface with two basic options:
+After installation, clicking on the icon ![Extension icon active][small icon active] will bring up a popup interface with two basic options:
 <p align="center"><img src="https://raw.githubusercontent.com/naschorr/Immobile/master/resources/popup.png"/></p>
 
 The 'Disable button is pretty self-explanatory, it'll stop all redirection, and allow you to browse the web as if this extension wasn't installed. After clicking on the 'Disable' button, it'll change into an 'Enable' button, which can be click to re-enable the redirection functionality. Also, you can tell which state the extension is in just by looking at the icon at the top right of the screen. The ![Extension icon active][small icon active] icon indicates that redirection is *enabled*, and ![Extension icon inactive][small icon inactive] indicates that redirection is *disabled*.

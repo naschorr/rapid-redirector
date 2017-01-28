@@ -11,10 +11,10 @@ Just download and unzip the repo, navigate to chrome://extensions/, enable devel
 A proper Chrome Web Store release is coming soon!
 
 ## Usage
-After installation, clicking on the icon ![extension icon small](https://raw.githubusercontent.com/naschorr/Immobile/master/code/images/icon_16.png) will bring up a popup interface with two basic options:
+After installation, clicking on the icon ![Extension icon active][small icon active](https://raw.githubusercontent.com/naschorr/Immobile/master/code/images/icon_16.png) will bring up a popup interface with two basic options:
 <p align="center"><img src="https://raw.githubusercontent.com/naschorr/Immobile/master/resources/popup.png"/></p>
 
-The 'Disable' button refers to what will happen to the popup's redirection ability after the button is pressed. In this case, pressing 'Disable' will disable redirection. Likewise, pressing 'Enable' would enable redirection.
+The 'Disable button is pretty self-explanatory, it'll stop all redirection, and allow you to browse the web as if this extension wasn't installed. After clicking on the 'Disable' button, it'll change into an 'Enable' button, which can be click to re-enable the redirection functionality. Also, you can tell which state the extension is in just by looking at the icon at the top right of the screen. The ![Extension icon active][small icon active] icon indicates that redirection is *enabled*, and ![Extension icon inactive][small icon inactive] indicates that redirection is *disabled*.
 
 The 'Add Redirection Rule' button will take you to the interface that allows you to add new rules. Clicking on that leads us to this page:
 
@@ -45,3 +45,5 @@ This simply means that while your rule is valid, it may have some issues later o
 If you ever need to delete a rule, you can just hit the delete button (⌫) to the right of the rule, as seen here:
 <p align="center"><img src="https://raw.githubusercontent.com/naschorr/Immobile/master/resources/deletion.png"/></p>
 
+[small icon active]: https://github.com/naschorr/Immobile/blob/master/code/images/icon_16.png?raw=true "Extension icon active"
+[small icon inactive]: https://github.com/naschorr/Immobile/blob/master/code/images/icon_inactive_16.png?raw=true "Extension icon inactive"

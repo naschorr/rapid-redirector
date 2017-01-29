@@ -81,10 +81,9 @@ class Utilities {
  * @param {string} insertStr - The string to insert
  * @param {int} index - The index to insert into
  * @return {string} The string with the inserted string inside it
- * TODO: add testing for this into the spec
  */
 String.prototype.insertAt = function(insertStr, index) {
-	return this.substr(0, index) + insertStr + this.substr(index, this.length - 1);
+	return this.substring(0, index) + insertStr + this.substring(index, this.length);
 }
 
 /**
@@ -92,8 +91,7 @@ String.prototype.insertAt = function(insertStr, index) {
  * @param {int} startIndex - The index to start removing characters at.
  * @param {int} endIndex - The index to end removing characters at (inclusive).
  * @return {string} The string with the characters between the indicies removed.
- * TODO: add testing for this into the spec
  */
 String.prototype.antiSlice = function(startIndex, endIndex) {
-	return this.substr(0, startIndex) + this.substr(endIndex + 1, this.length - 1);
+	return this.substring(0, startIndex) + this.substring(endIndex, this.length);
 }

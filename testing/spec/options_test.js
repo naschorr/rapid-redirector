@@ -159,7 +159,7 @@ describe("the options page", function() {
 		});
 	});
 
-	describe("the getSubdomainDifference function", function() {
+	describe("the calcSubdomainDifference function", function() {
 		/*	Tests:
 			empty source, empty destination - 0
 			FQ source with no subdomains, FQ destination with no subdomains - 0
@@ -176,56 +176,56 @@ describe("the options page", function() {
 			FQ source with one subdomain and path, FQ destination with no subdomains, and different path - 1
 		*/
 		it("should return 0 when given an empty source and destination", function() {
-			expect(getSubdomainDifference('','')).toBe(0);
+			expect(calcSubdomainDifference('','')).toBe(0);
 		});
 
 		it("should return 0 when given a FQ source and FQ destination with no subdomains", function() {
-			expect(getSubdomainDifference('http://nickschorr.com/','http://nickschorr.com/')).toBe(0);
+			expect(calcSubdomainDifference('http://nickschorr.com/','http://nickschorr.com/')).toBe(0);
 		});
 
 		it("should return 0 when given a FQ source and FQ destination with one subdomain each", function() {
-			expect(getSubdomainDifference('http://one.nickschorr.com/','http://two.nickschorr.com/')).toBe(0);
+			expect(calcSubdomainDifference('http://one.nickschorr.com/','http://two.nickschorr.com/')).toBe(0);
 		});
 
 		it("should return 0 when given a FQ source with one subdomain and a FQ destination with no subdomains", function() {
-			expect(getSubdomainDifference('http://one.nickschorr.com/','http://nickschorr.com/')).toBe(1);
+			expect(calcSubdomainDifference('http://one.nickschorr.com/','http://nickschorr.com/')).toBe(1);
 		});
 
 		it("should return 0 when given a source and destination with no subdomains", function() {
-			expect(getSubdomainDifference('nickschorr.com','nickschorr.com')).toBe(0);
+			expect(calcSubdomainDifference('nickschorr.com','nickschorr.com')).toBe(0);
 		});
 
 		it("should return 0 when given a source and destination with a single subdomain each", function() {
-			expect(getSubdomainDifference('one.nickschorr.com','two.nickschorr.com')).toBe(0);
+			expect(calcSubdomainDifference('one.nickschorr.com','two.nickschorr.com')).toBe(0);
 		});
 
 		it("should return 1 when given a source with one subdomain, and a destination with no subdomain", function() {
-			expect(getSubdomainDifference('one.nickschorr.com','nickschorr.com')).toBe(1);
+			expect(calcSubdomainDifference('one.nickschorr.com','nickschorr.com')).toBe(1);
 		});
 
 		it("should return 1 when given a source with no subdomain, and a destination with one subdomain", function() {
-			expect(getSubdomainDifference('nickschorr.com','one.nickschorr.com')).toBe(1);
+			expect(calcSubdomainDifference('nickschorr.com','one.nickschorr.com')).toBe(1);
 		});
 
 		/* 'of the same subdomains' refers to matching nested subdomains as the other domain, like a subset */
 		it("should return 1 when given a source with three subdomains and destination with two of the same subdomains", function() {
-			expect(getSubdomainDifference('three.two.one.nickschorr.com','two.one.nickschorr.com')).toBe(1);
+			expect(calcSubdomainDifference('three.two.one.nickschorr.com','two.one.nickschorr.com')).toBe(1);
 		});
 
 		it("should return 1 when given a destination with three subdomains, and a source with two of the same subdomains", function() {
-			expect(getSubdomainDifference('two.one.nickschorr.com','three.two.one.nickschorr.com')).toBe(1);
+			expect(calcSubdomainDifference('two.one.nickschorr.com','three.two.one.nickschorr.com')).toBe(1);
 		});
 
 		it("should return 5 when given a source with five subdomains and destination with no subdomains", function() {
-			expect(getSubdomainDifference('one.two.three.four.five.nickschorr.com','nickschorr.com')).toBe(5);
+			expect(calcSubdomainDifference('one.two.three.four.five.nickschorr.com','nickschorr.com')).toBe(5);
 		});
 
 		it("should return 0 when given a FQ source with no subdomains and a path, and a FQ destination with no subdomains and a different path", function() {
-			expect(getSubdomainDifference('http://nickschorr.com/test/path/', 'http://nickschorr.com/path/test/')).toBe(0);
+			expect(calcSubdomainDifference('http://nickschorr.com/test/path/', 'http://nickschorr.com/path/test/')).toBe(0);
 		});
 
 		it("should return 1 when given a FQ source with one subdomain and a path, and a FQ destination with no subdomains and a different path", function() {
-			expect(getSubdomainDifference('http://one.nickschorr.com/test/path/', 'http://nickschorr.com/path/test/')).toBe(1);
+			expect(calcSubdomainDifference('http://one.nickschorr.com/test/path/', 'http://nickschorr.com/path/test/')).toBe(1);
 		});
 	});
 

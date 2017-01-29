@@ -113,6 +113,10 @@ tr:hover {
 	font-size: 175%;
 }
 
+.arrow::before {
+	content: '\2192';
+}
+
 .arrow.regex-rule {
 	color: var(--main-color);
 }
@@ -127,6 +131,10 @@ tr:hover {
 	float: right;
 	cursor: pointer;
 	transition-duration: 0.25s;
+}
+
+.delete-rule-button::before {
+	content: '\2326';
 }
 
 .delete-rule-button:hover {

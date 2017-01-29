@@ -188,12 +188,7 @@ function calcSubdomainDifference(source, destination) {
 function hasMismatchedProtocol(source, destination) {
 	var protocolRegex = new RegExp("^.+?:\/\/");
 
-	if(protocolRegex.test(source) === protocolRegex.test(destination)) {
-		return false;
-	}
-	else {
-		return true;
-	}
+	return (protocolRegex.test(source) !== protocolRegex.test(destination))
 }
 
 /**
@@ -312,50 +307,45 @@ function addBtnListener(buttonId) {
  */
 function buildRulesTable() {
 	chrome.storage.sync.get("redirectionRules", function(result) {
-		var rules = result.redirectionRules || [];
-		var ruleCount = rules.length;
+		let rules = result.redirectionRules || [];
 
-		if(ruleCount > 0) {
-			var tableContainer = document.getElementById('currentRulesTableContainer');
+		if(rules.length > 0) {
+			let tableContainer = document.getElementById('currentRulesTableContainer');
 			document.getElementById('currentRulesStatus').innerHTML = CURRENT_RULES_TEXT;
 
-			var table = document.createElement('table');
+			let table = document.createElement('table');
 			table.id = 'currentRulesTable';
-
-			/* Generate the table */
-			for(var row = 0; row < ruleCount; row++) {
-				var tr = table.insertRow();
-				
-				var source = tr.insertCell();
-				source.appendChild(document.createTextNode(rules[row].src));
-
-				var arrow = tr.insertCell();
-				var span = document.createElement('span');
-				span.className = 'arrow';
-				if(rules[row].regex) {
-					span.classList.add("regex-rule");
-				}
-				span.appendChild(document.createTextNode('\u2192'));
-				arrow.appendChild(span);
-
-				var destination = tr.insertCell();
-				destination.appendChild(document.createTextNode(rules[row].dest));
-
-				var button = tr.insertCell();
-				var buttonTextNode = document.createTextNode('\u2326');
-				var buttonElement = document.createElement('BUTTON');
-				buttonElement.appendChild(buttonTextNode);
-				buttonElement.className = "delete-rule-button";
-				buttonElement.classList.add("flip-text");
-				buttonElement.id = `deleteRuleButton-${row}`;
-				button.appendChild(buttonElement);
-			}
 			tableContainer.appendChild(table);
 
-			/* Generate the listeners for the buttons in the table */
-			for(var btn = 0; btn < ruleCount; btn++) {
-				addBtnListener(`deleteRuleButton-${btn}`);
-			}
+			/* Generate the table */
+			rules.forEach(function(rule, index) {
+				/* Build a new row for the table */
+				let tr = table.insertRow();
+
+				/* Add in source cell */
+				tr.insertCell().appendChild(document.createTextNode(rule.src));
+
+				/* Add in arrow cell and add in regex class if the rule uses regex */
+				let arrow = tr.insertCell();
+				let span = document.createElement('span');
+				span.className = 'arrow';
+				if(rule.regex) {
+					span.classList.add("regex-rule");
+				}
+				arrow.appendChild(span);
+
+				/* Add in destination cell */
+				tr.insertCell().appendChild(document.createTextNode(rule.dest));
+
+				let buttonCell = tr.insertCell();
+				let buttonElement = document.createElement('BUTTON');
+				buttonElement.className = "delete-rule-button flip-text";
+				buttonElement.id = `deleteRuleButton-${index}`;
+				buttonCell.appendChild(buttonElement);
+
+				/* Add the listener to the button */
+				addBtnListener(`deleteRuleButton-${index}`);
+			});
 
 		}else{
 			document.getElementById('currentRulesStatus').innerHTML = NO_RULES_TEXT;

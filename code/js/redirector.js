@@ -64,9 +64,9 @@ function isRedirectRule(url, rules) {
     return null;
   }
 
-  var match = null;
-  var index = 0;
-  var newUrl;
+  let match = null;
+  let index = 0;
+  let newUrl;
 
   while(!match && index < rules.length) {
     let rule = rules[index];
@@ -74,16 +74,17 @@ function isRedirectRule(url, rules) {
     if(rule.regex) {
       let result = regexLookup.get(rule.src).exec(url);
       if(result) {
-        newUrl = url.antiSlice(result.index, result.index + result[0].length - 1).insertAt(rule.dest, result.index);
+        newUrl = url.antiSlice(result.index, result.index + result[0].length).insertAt(rule.dest, result.index);
       }
     }else{
       newUrl = url.replace(rules[index].src, rules[index].dest);
     }
-    index++;
-  }
 
-  if(newUrl !== url) {
-    match = newUrl;
+    if(newUrl !== url) {
+      match = newUrl;
+    }
+
+    index++;
   }
 
   return match;

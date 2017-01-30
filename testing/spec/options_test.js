@@ -229,6 +229,43 @@ describe("the options page", function() {
 		});
 	});
 
+	describe("the hasMismatchedProtocol function", function() {
+		/*	Tests:
+			both URLs have a protocol - false
+			both URLs don't have a protocol - false
+			only source URL has a protocol - true
+			only destination URL has a protocl - true
+		*/
+
+		let protocolA;
+		let protocolB;
+		let domainA;
+		let domainB;
+
+		beforeEach(function() {
+			protocolA = "chrome://";
+			protocolB = "https://";
+			domainA = "nickschorr.com/";
+			domainB = "test.nickschorr.com/"
+		});
+
+		it("should return false when both URLs have a protocol", function() {
+			expect(hasMismatchedProtocol(protocolA + domainA, protocolB + domainB)).toEqual(false);
+		});
+
+		it("should return false when both URLs don't have a protocol", function() {
+			expect(hasMismatchedProtocol(domainA, domainB)).toEqual(false);
+		});
+
+		it("should return true when only the source URL has a protocol", function() {
+			expect(hasMismatchedProtocol(protocolA + domainA, domainB)).toEqual(true);
+		});
+
+		it("should return true when only the destination URL has a protocol", function() {
+			expect(hasMismatchedProtocol(domainA, protocolB + domainB)).toEqual(true);
+		});
+	});
+
 	describe("the isValidInput function", function() {
 		/* 	Tests:
 			// Tests the whitespace checker

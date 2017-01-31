@@ -6,11 +6,105 @@ var NO_DUPS_TEXT = chrome.i18n.getMessage('options_no_duplicates_string');
 var NO_CYCLES_TEXT = chrome.i18n.getMessage('options_no_cycles_string');
 var MISMATCHED_SUBDOMAINS_TEXT = chrome.i18n.getMessage('options_mismatched_subdomains_string');
 var MISMATCHED_PROTOCOLS_TEXT = chrome.i18n.getMessage('options_mismatched_protocols_string');
-var WARNING_SYMBOL = '\u26a0';
-var SUCCESS_SYMBOL = '\u2713';
+const POPUP_CONTAINER_CLASS = "notification-popup";
+const POPUP_SYMBOL_CLASS = "notification-popup-status icon";
+const POPUP_TEXT_CLASS = "notification-popup-status";
+const POPUP_CONTAINER_ID = "notificationPopup";
+const POPUP_SYMBOL_ID = "notificationPopupStatusIcon";
+const POPUP_TEXT_ID = "notificationPopupStatus";
 /* End Globals */
 
 /* Note: 'Rule' refers to the combination of the source and destination domains. */
+
+/**
+ * Class that handles creation and removal of notification popups
+ */
+class NotificationPopup {
+	/**
+	 * Constructs the popup's properties and initiates the creation of the actual popup.
+	 * @param {(String|Array)} containerClasses - The array of classes for the container div's CSS, or the string representation of those classes.
+	 * @param {(String|Array)} symbolClasses - The array of classes for the symbol div's CSS, or the string representation of those classes.
+	 * @param {(String|Array)} textClasses - The array of classes for the text div's CSS, or the string representation of those classes.
+	 * @param {String} text - The text for the popup.
+	 * @param {String=} symbol - The symbol placed at the top of the popup (ex. Check mark to indicate success)
+	 */
+	constructor(containerClasses, symbolClasses, textClasses, text, symbol = '') {
+		this.containerClasses = NotificationPopup.getArray(containerClasses);
+		this.containerClasses.push(POPUP_CONTAINER_CLASS);
+
+		this.symbolClasses = NotificationPopup.getArray(symbolClasses);
+		this.symbolClasses.push(POPUP_SYMBOL_CLASS);
+
+		this.textClasses = NotificationPopup.getArray(textClasses);
+		this.textClasses.push(POPUP_TEXT_CLASS);
+
+		this.text = text;
+		this.symbol = symbol;
+		this.delay = NotificationPopup.calcTimeToReadString(this.text);
+
+		let self = this;
+		this.insertNotificationPopup(function() {
+			setTimeout(function() {
+				self.removeNotificationPopup();
+			}, self.delay);
+		});
+	}
+
+	/*
+	 * Creates and inserts a notification popup into the beginning of the body
+	 * @param {function} callback - The function to call after the popup has been inserted
+	 */
+	insertNotificationPopup(callback) {
+		let notificationHtml = 
+		`<div class="${this.containerClasses.join(' ')}" id="${POPUP_CONTAINER_ID}">
+			<div class="${this.symbolClasses.join(' ')}" id="${POPUP_SYMBOL_ID}">${this.symbol}</div>
+			<div class="${this.textClasses.join(' ')}" id="${POPUP_TEXT_ID}">${this.text}</div>
+		</div>`;
+
+		document.body.insertAdjacentHTML('afterbegin', notificationHtml);
+
+		if(callback) {
+			callback();
+		}
+	}
+
+	/*
+	 * Removes a notification popup from the DOM
+	 */
+	removeNotificationPopup() {
+		let notificationPopup = document.getElementById(POPUP_CONTAINER_ID);
+		notificationPopup.parentNode.removeChild(notificationPopup);
+	}
+
+	/**
+	 * Calculates the length of time it should take someone to read the provided string (in milliseconds).
+	 * @param {string} string - The string to check for how long it takes to read.
+	 * @return {int} The time in milliseconds that it should take for someone to read the string. 0 if the string is empty
+	 */
+	static calcTimeToReadString(string) {
+		if(string) {
+			return 500 + 75 * string.length;
+		}
+		else {			
+			return 0;
+		}
+	}
+
+	/**
+	 * Checks if an object is an array, and converts it to an array (of one object) if it's not
+	 * @param {Object} object - The object to check.
+	 * @return {Array} The original array, or newly created array populated with the object.
+	 * Todo: add tests for this method
+	 */
+	static getArray(object) {
+		if(object.constructor === Array) {
+			return object;
+		}
+		else {
+			return new Array(object);
+		}
+	}
+}
 
 /* Methods */
 /**
@@ -57,18 +151,6 @@ function getButtonIndex(buttonId) {
 }
 
 /**
- * Calculates the length of time it should take someone to read the provided string (in milliseconds).
- * @param {string} string - The string to check for how long it takes to read.
- * @return {int} The time in milliseconds that it should take for someone to read the string. 0 if the string is empty
- */
-function calcTimeToReadString(string) {
-	if(string) {
-		return 500 + 75 * string.length;
-	}
-	return 0;
-}
-
-/**
  * Attempts to remove the protocol, leading forward slashes, and the path from a URL.
  * @param {string} url - The url to (attempt to) remove the protocol and path from/
  * @return {string} url - The resulting domain, or the url if a domain couldn't be found.
@@ -89,53 +171,6 @@ function getDomain(url) {
 		noPath = url;
 	}
 	return noPath;
-}
-
-/**
- * Displays a notification to the user, alerting them of any errors or suggestions.
- * @param {char|string} symbol - The string or character that's shown at the top of the popup. Often a unicode symbol relating to the nature of the popup.
- * @param {string} text - The main text shown to the user when the notification pops up. Often used to tell the user what went wrong.
- * @param {string} color - The name of a color (defined as a CSS class) that the notification should use as its background.
- * @param {int} delay - Time (in milliseconds) to wait before calling the callback function. Null if a delay isn't necessary.
- * @param {function} callback - The function to be invoked either after the notification has been displayed, potentially after a delay. Mostly used to call the hideNotificationPopup function.
- */
-function showNotificationPopup(symbol, text, color, delay, callback) {
-	/* Don't bother showing the popup if the delay is instant */
-	if(delay === 0) {
-		return;
-	}
-
-	if(text) {
-		var notificationElement = document.getElementById('notificationPopup');
-		document.getElementById('notificationPopupStatus').innerHTML = text;
-		if(color) {
-			notificationElement.classList.add(color);
-		}
-		if(symbol) {
-			document.getElementById('notificationPopupStatusIcon').innerHTML = symbol;
-		}
-		notificationElement.classList.add('visible');
-	}
-
-	/* Callback is mostly to be used to call hideNotificationPopup(). Delay specifies a timer before calling the callback. */
-	if(callback) {
-		if(delay != null) {
-			setTimeout(function() {
-				callback();
-			}, delay);
-		}else{
-			callback();
-		}
-	}
-}
-
-/**
- * Hides the notification popup by emptying the text sections, and removing the added styles.
- */
-function hideNotificationPopup() {
-	document.getElementById('notificationPopup').className = 'notification-popup';
-	document.getElementById('notificationPopupStatusIcon').innerHTML = '';
-	document.getElementById('notificationPopupStatus').innerHTML = '';
 }
 
 /**
@@ -183,7 +218,6 @@ function calcSubdomainDifference(source, destination) {
  * @param {string} source - The source URL.
  * @param {string} destination - The destination URL.
  * @return {boolean} True if both the source and destination URLs either have or don't have a protocol. False if one has a protocol and the other doesn't.
- * TODO add tests for this function to the spec.
  */
 function hasMismatchedProtocol(source, destination) {
 	var protocolRegex = new RegExp("^.+?:\/\/");
@@ -201,7 +235,7 @@ function hasMismatchedProtocol(source, destination) {
 function isValidInput(source, destination, rules) {
 	/* Can't be empty or only have whitespace characters. */
 	if(!hasChars(source) || !hasChars(destination)) {
-		showNotificationPopup(WARNING_SYMBOL, NO_EMPTY_TEXT, 'red', calcTimeToReadString(NO_EMPTY_TEXT), hideNotificationPopup);
+		new NotificationPopup("red", "alert", [], NO_EMPTY_TEXT);
 		return false;
 	}
 
@@ -209,7 +243,7 @@ function isValidInput(source, destination, rules) {
 	if(rules.some(function(obj) {
 		return hasValue(obj, "src", source);
 	})) {
-		showNotificationPopup(WARNING_SYMBOL, NO_DUPS_TEXT, 'red', calcTimeToReadString(NO_DUPS_TEXT), hideNotificationPopup);
+		new NotificationPopup("red", "alert", [], NO_DUPS_TEXT);
 		return false;
 	}
 
@@ -217,7 +251,7 @@ function isValidInput(source, destination, rules) {
 	if(rules.some(function(obj) {
 		return hasValue(obj, "dest", source);
 	})) {
-		showNotificationPopup(WARNING_SYMBOL, NO_CYCLES_TEXT, 'red', calcTimeToReadString(NO_CYCLES_TEXT), hideNotificationPopup);
+		new NotificationPopup("red", "alert", [], NO_CYCLES_TEXT);
 		return false;
 	}
 
@@ -226,7 +260,7 @@ function isValidInput(source, destination, rules) {
 		(ex. amazon.com -> smile.amazon.com won't work, but www.amazon.com -> smile.amazon.com will work.) 
 	*/
 	if(calcSubdomainDifference(source, destination) > 0) {
-		showNotificationPopup(SUCCESS_SYMBOL, MISMATCHED_SUBDOMAINS_TEXT, 'green', calcTimeToReadString(MISMATCHED_SUBDOMAINS_TEXT), hideNotificationPopup);
+		new NotificationPopup("green", "success", [], MISMATCHED_SUBDOMAINS_TEXT);
 	}
 
 	/*
@@ -234,7 +268,7 @@ function isValidInput(source, destination, rules) {
 		(ex. chrome://newtab -> reddit.com won't work, but chrome://newtab -> https://reddit.com will work.)
 	*/
 	if(hasMismatchedProtocol(source, destination)) {
-		showNotificationPopup(SUCCESS_SYMBOL, MISMATCHED_PROTOCOLS_TEXT, 'green', calcTimeToReadString(MISMATCHED_PROTOCOLS_TEXT), hideNotificationPopup);
+		new NotificationPopup("green", "success", [], MISMATCHED_PROTOCOLS_TEXT);
 	}
 
 	return true;

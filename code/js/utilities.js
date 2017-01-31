@@ -11,7 +11,7 @@ class Utilities {
 	/** 
 	 * @ignore
 	 * Outputs the currently saved redirection rules to the console.
- 	*/
+ 	 */
 	static dumpCurrentRules() {
 		chrome.storage.sync.get("redirectionRules", function(result) {
 			let rules = result.redirectionRules || [];
@@ -94,4 +94,15 @@ String.prototype.insertAt = function(insertStr, index) {
  */
 String.prototype.antiSlice = function(startIndex, endIndex) {
 	return this.substring(0, startIndex) + this.substring(endIndex, this.length);
+}
+
+/**
+ * Pushes an object onto the end of an array, and then returns the new array. Basically the same as Python's array.append().
+ * @param {Object} object - The object to push into the array.
+ * @return {Array} The original array with the new object pushed into it.
+ * Todo: add tests into the spec
+ */
+Array.prototype.append = function(object) {
+	this.push(object);
+	return this;
 }

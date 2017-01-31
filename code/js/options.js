@@ -29,14 +29,9 @@ class NotificationPopup {
 	 * @param {String=} symbol - The symbol placed at the top of the popup (ex. Check mark to indicate success)
 	 */
 	constructor(containerClasses, symbolClasses, textClasses, text, symbol = '') {
-		this.containerClasses = NotificationPopup.getArray(containerClasses);
-		this.containerClasses.push(POPUP_CONTAINER_CLASS);
-
-		this.symbolClasses = NotificationPopup.getArray(symbolClasses);
-		this.symbolClasses.push(POPUP_SYMBOL_CLASS);
-
-		this.textClasses = NotificationPopup.getArray(textClasses);
-		this.textClasses.push(POPUP_TEXT_CLASS);
+		this.containerClasses = NotificationPopup.getArray(containerClasses).append(POPUP_CONTAINER_CLASS);
+		this.symbolClasses = NotificationPopup.getArray(symbolClasses).append(POPUP_SYMBOL_CLASS);
+		this.textClasses = NotificationPopup.getArray(textClasses).append(POPUP_TEXT_CLASS);
 
 		this.text = text;
 		this.symbol = symbol;

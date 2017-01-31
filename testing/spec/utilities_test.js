@@ -65,5 +65,37 @@ describe("The utilities script", function() {
 		it("should be able to perform the antiSlice on indicies inside and after the string by just returning the partial string", function() {
 			expect(string.antiSlice(string.length - 3, string.length + 3)).toEqual("str");
 		});
-	});	
+	});
+
+	describe("The Array.append() function", function() {
+		let arrayA;
+		let arrayB;
+		let object;
+		let string;
+		let int;
+
+		beforeEach(function() {
+			arrayA = new Array("one", "two", "three");
+			arrayB = arrayA.slice();
+			object = {data: "object"};
+			string = "string";
+			int = 42;
+		});
+
+		it("should return the same array when passed no arguments", function() {
+			expect(arrayA.append()).toEqual(arrayA);
+		});
+
+		it("should return the same array with an object pushed onto the end when given an object as the argument", function() {
+			arrayB.push(object);
+			expect(arrayA.append(object)).toEqual(arrayB);
+		});
+
+		it("should return the array with an arbitrary amount of objects pushed into it", function() {
+			arrayB.push(object);
+			arrayB.push(string);
+			arrayB.push(int);
+			expect(arrayA.append(object, string, int)).toEqual(arrayB);
+		});
+	});
 });

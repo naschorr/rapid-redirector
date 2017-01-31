@@ -100,9 +100,12 @@ String.prototype.antiSlice = function(startIndex, endIndex) {
  * Pushes an object onto the end of an array, and then returns the new array. Basically the same as Python's array.append().
  * @param {Object} object - The object to push into the array.
  * @return {Array} The original array with the new object pushed into it.
- * Todo: add tests into the spec
  */
-Array.prototype.append = function(object) {
-	this.push(object);
+Array.prototype.append = function() {
+	let args = Array.prototype.slice.call(arguments);
+	let self = this;
+	args.forEach(function(arg) {
+		self.push(arg);
+	});
 	return this;
 }

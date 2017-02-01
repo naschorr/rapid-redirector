@@ -18,6 +18,7 @@ const POPUP_TEXT_ID = "notificationPopupStatus";
 
 /**
  * Class that handles creation and removal of notification popups
+ * Todo: Fix testing for this class ("ReferenceError: NotificationPopup undefined", but is defined in the spec runner)
  */
 class NotificationPopup {
 	/**
@@ -89,7 +90,6 @@ class NotificationPopup {
 	 * Checks if an object is an array, and converts it to an array (of one object) if it's not
 	 * @param {Object} object - The object to check.
 	 * @return {Array} The original array, or newly created array populated with the object.
-	 * Todo: add tests for this method
 	 */
 	static getArray(object) {
 		if(object.constructor === Array) {

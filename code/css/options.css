@@ -39,7 +39,7 @@ body {
 	content: '\26a0';
 }
 
-.icon.sucess::before {
+.icon.success::before {
 	content: '\2713';
 }
 

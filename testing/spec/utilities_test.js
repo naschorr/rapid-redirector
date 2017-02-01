@@ -29,6 +29,32 @@ describe("The utilities script", function() {
 		it("should handle strings inserted before the beginning by just inserting at the beginning", function() {
 			expect(stringA.insertAt(stringB, -5)).toEqual("stringBstringA");
 		});
+
+		/* Test for falsey values */
+		it("should handle strings inserted at null position like strings inserted at 0", function() {
+			expect(stringA.insertAt(stringB, null)).toEqual("stringBstringA");
+		});
+
+		it("should handle strings inserted at false position like strings inserted at 0", function() {
+			expect(stringA.insertAt(stringB, false)).toEqual("stringBstringA");
+		});
+
+		it("should handle strings inserted at 0 position", function() {
+			expect(stringA.insertAt(stringB, 0)).toEqual("stringBstringA");
+		});
+
+		it("should handle strings inserted at '' position like strings inserted at 0", function() {
+			expect(stringA.insertAt(stringB, '')).toEqual("stringBstringA");
+		});
+
+		it("should handle strings inserted at undefined position like strings inserted at 0", function() {
+			expect(stringA.insertAt(stringB, undefined)).toEqual("stringBstringA");
+		});
+
+		it("should handle strings inserted at NaN position like strings inserted at 0", function() {
+			expect(stringA.insertAt(stringB, NaN)).toEqual("stringBstringA");
+		});
+		/* End falsey tests */
 	});
 
 	describe("The String.antiSlice() function", function() {
@@ -65,6 +91,58 @@ describe("The utilities script", function() {
 		it("should be able to perform the antiSlice on indicies inside and after the string by just returning the partial string", function() {
 			expect(string.antiSlice(string.length - 3, string.length + 3)).toEqual("str");
 		});
+
+		/* Test for falsey values */
+		/* Test first falsey arg */
+		it("should handle a null first argument and a 0 second argument", function() {
+			expect(string.antiSlice(null, 0)).toEqual("string");
+		});
+
+		it("should handle a false first argument and a 0 second argument", function() {
+			expect(string.antiSlice(false, 0)).toEqual("string");
+		});
+
+		it("should handle a 0 first and second argument", function() {
+			expect(string.antiSlice(0, 0)).toEqual("string");
+		});
+
+		it("should handle a '' first argument and a 0 second argument", function() {
+			expect(string.antiSlice('', 0)).toEqual("string");
+		});
+
+		it("should handle a undefined first argument and a 0 second argument", function() {
+			expect(string.antiSlice(undefined, 0)).toEqual("string");
+		});
+
+		it("should handle a NaN first argument and a 0 second argument", function() {
+			expect(string.antiSlice(NaN, 0)).toEqual("string");
+		});
+
+		/* Test second falsey arg */
+		it("should handle a 0 first argument and a null second argument", function() {
+			expect(string.antiSlice(0, null)).toEqual("string");
+		});
+
+		it("should handle a 0 first argument and a false second argument", function() {
+			expect(string.antiSlice(0, false)).toEqual("string");
+		});
+
+		it("should handle a 0 first and second argument", function() {
+			expect(string.antiSlice(0, 0)).toEqual("string");
+		});
+
+		it("should handle a 0 first argument and a '' second argument", function() {
+			expect(string.antiSlice(0, '')).toEqual("string");
+		});
+
+		it("should handle a 0 first argument and an undefined second argument", function() {
+			expect(string.antiSlice(0, undefined)).toEqual("string");
+		});
+
+		it("should handle a 0 first argument and a NaN second argument", function() {
+			expect(string.antiSlice(0, NaN)).toEqual("string");
+		});
+		/* End falsey tests */
 	});
 
 	describe("The Array.append() function", function() {
@@ -96,6 +174,11 @@ describe("The utilities script", function() {
 			arrayB.push(string);
 			arrayB.push(int);
 			expect(arrayA.append(object, string, int)).toEqual(arrayB);
+		});
+
+		it("should return the array with null pushed into it when given a null argument", function() {
+			arrayB.push(null);
+			expect(arrayA.append(null)).toEqual(arrayB);
 		});
 	});
 });

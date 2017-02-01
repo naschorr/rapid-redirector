@@ -82,7 +82,11 @@ class Utilities {
  * @param {int=} index - The index to insert into
  * @return {string} The string with the inserted string inside it
  */
-String.prototype.insertAt = function(insertStr, index) {
+String.prototype.insertAt = function(insertStr, index=0) {
+	if(!index) {
+		index = 0;
+	}
+
 	return this.substring(0, index) + insertStr + this.substring(index, this.length);
 }
 
@@ -93,6 +97,13 @@ String.prototype.insertAt = function(insertStr, index) {
  * @return {string} The string with the characters between the indicies removed.
  */
 String.prototype.antiSlice = function(startIndex, endIndex) {
+	if(!startIndex) {
+		startIndex = 0;
+	}
+	if(!endIndex) {
+		endIndex = 0;
+	}
+
 	return this.substring(0, startIndex) + this.substring(endIndex, this.length);
 }
 

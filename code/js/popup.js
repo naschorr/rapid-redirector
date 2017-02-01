@@ -1,10 +1,10 @@
 /* Globals */
 const POPUP_DESC_WAIT_TIME = 2000;
-var ENABLED_TEXT = chrome.i18n.getMessage('popup_enabled_string');
-var DISABLED_TEXT = chrome.i18n.getMessage('popup_disabled_string');
-var ENABLE_TEXT = chrome.i18n.getMessage('popup_enable_string');
-var DISABLE_TEXT = chrome.i18n.getMessage('popup_disable_string');
-var POPUP_DESC = chrome.i18n.getMessage('popup_description');
+let ENABLED_TEXT;
+let DISABLED_TEXT;
+let ENABLE_TEXT;
+let DISABLE_TEXT;
+let POPUP_DESC;
 /* End Globals */
 
 /* Methods */
@@ -13,7 +13,6 @@ var POPUP_DESC = chrome.i18n.getMessage('popup_description');
  *  @param {int} state - The current redirection state of the extension (0 = Disabled, 1 = Enabled).
  */
 function updatePopupAfterStateSaved(state) {
-	
 	let redirectionStateText;
 	let redirectionBtnValue;
 
@@ -66,8 +65,19 @@ function loadLocalizedText() {
 	document.getElementById('logoText').innerHTML = chrome.i18n.getMessage('name');
 	document.getElementById('subText').innerHTML = POPUP_DESC;
 	document.getElementById('redirectionRules').value = chrome.i18n.getMessage('popup_add_new_rule_string');
+
+	/* Load globals */
+	ENABLED_TEXT = chrome.i18n.getMessage('popup_enabled_string');
+	DISABLED_TEXT = chrome.i18n.getMessage('popup_disabled_string');
+	ENABLE_TEXT = chrome.i18n.getMessage('popup_enable_string');
+	DISABLE_TEXT = chrome.i18n.getMessage('popup_disable_string');
+	POPUP_DESC = chrome.i18n.getMessage('popup_description');
 }
 /* End Methods */
+
+/* Localization Init */
+document.addEventListener('DOMContentLoaded', loadLocalizedText());
+/* End Localization */
 
 /* Listener Init */
 document.addEventListener('DOMContentLoaded', loadRedirectionState());
@@ -85,7 +95,3 @@ redirectionRulesBtn.addEventListener('click', function() {
 	chrome.tabs.create({'url': `chrome://extensions/?options=${chrome.runtime.id}`});
 });
 /* End Listener Init */
-
-/* Localization Init */
-document.addEventListener('DOMContentLoaded', loadLocalizedText());
-/* End Localization */

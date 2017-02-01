@@ -1,11 +1,11 @@
 /* Globals */
-var CURRENT_RULES_TEXT = chrome.i18n.getMessage('options_current_rules_string');
-var NO_RULES_TEXT = chrome.i18n.getMessage('options_no_rules_string');
-var NO_EMPTY_TEXT = chrome.i18n.getMessage('options_no_empty_rule_string');
-var NO_DUPS_TEXT = chrome.i18n.getMessage('options_no_duplicates_string');
-var NO_CYCLES_TEXT = chrome.i18n.getMessage('options_no_cycles_string');
-var MISMATCHED_SUBDOMAINS_TEXT = chrome.i18n.getMessage('options_mismatched_subdomains_string');
-var MISMATCHED_PROTOCOLS_TEXT = chrome.i18n.getMessage('options_mismatched_protocols_string');
+let CURRENT_RULES_TEXT;
+let NO_RULES_TEXT;
+let NO_EMPTY_TEXT;
+let NO_DUPS_TEXT;
+let NO_CYCLES_TEXT;
+let MISMATCHED_SUBDOMAINS_TEXT;
+let MISMATCHED_PROTOCOLS_TEXT;
 /* End Globals */
 
 /* Note: 'Rule' refers to the combination of the source and destination domains. */
@@ -38,7 +38,7 @@ function hasChars(string) {
 /**
  * Gets the index associated with a given button's id. This index can then be used to delete specific redirection rules.
  * @param {string} buttonId - The id associated with a button in the current rules table.
- * @return {int|null} The integer representing the button's index in the rules table, or null if there isn't a valid index.
+ * @return {(int|null)} The integer representing the button's index in the rules table, or null if there isn't a valid index.
  */
 function getButtonIndex(buttonId) {
 	try {
@@ -322,8 +322,21 @@ function loadLocalizedText() {
 	document.getElementById('addRuleConfirm').value = chrome.i18n.getMessage('options_add_rule_button');
 	document.getElementById('addRuleOrRegexText').innerHTML = chrome.i18n.getMessage('options_add_rule_or_regex');
 	document.getElementById('addRegexConfirm').value = chrome.i18n.getMessage('options_add_regex_button');
+
+	/* Load globals */
+	CURRENT_RULES_TEXT = chrome.i18n.getMessage('options_current_rules_string');
+	NO_RULES_TEXT = chrome.i18n.getMessage('options_no_rules_string');
+	NO_EMPTY_TEXT = chrome.i18n.getMessage('options_no_empty_rule_string');
+	NO_DUPS_TEXT = chrome.i18n.getMessage('options_no_duplicates_string');
+	NO_CYCLES_TEXT = chrome.i18n.getMessage('options_no_cycles_string');
+	MISMATCHED_SUBDOMAINS_TEXT = chrome.i18n.getMessage('options_mismatched_subdomains_string');
+	MISMATCHED_PROTOCOLS_TEXT = chrome.i18n.getMessage('options_mismatched_protocols_string');
 }
 /* End Methods */
+
+/* Localization Init */
+document.addEventListener('DOMContentLoaded', loadLocalizedText());
+/* End Localization */
 
 /* Listener Init */
 document.addEventListener('DOMContentLoaded', buildRulesTable());
@@ -349,7 +362,3 @@ addRegexBtn.addEventListener('click', function() {
 	desktopInputElement.value = '';
 });
 /* End Listener Init */
-
-/* Localization Init */
-document.addEventListener('DOMContentLoaded', loadLocalizedText());
-/* End Localization */

@@ -79,7 +79,7 @@ class Utilities {
 /**
  * Builds a string with another string inserted into it at a certain index.
  * @param {string} insertStr - The string to insert
- * @param {int} index - The index to insert into
+ * @param {int=} index - The index to insert into
  * @return {string} The string with the inserted string inside it
  */
 String.prototype.insertAt = function(insertStr, index) {
@@ -99,7 +99,7 @@ String.prototype.antiSlice = function(startIndex, endIndex) {
 /**
  * Pushes an object onto the end of an array, and then returns the new array. Basically the same as Python's array.append().
  * @param {Object} object - The object to push into the array.
- * @return {Array} The original array with the new object pushed into it.
+ * @return {Array.Object} The original array with the new object pushed into it.
  */
 Array.prototype.append = function() {
 	let args = Array.prototype.slice.call(arguments);

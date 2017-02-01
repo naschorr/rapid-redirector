@@ -57,7 +57,7 @@ class RegexLookup {
  * Checks if the URL can be found in the supplied set of redirection rules.
  * @param {string} url - The url to check.
  * @param {array} rules - Array of 'rules' objects to check against. {src:"source URL (or regex pattern)", dest:"destination URL", regex:boolean if .src is a regex}
- * @return {string|null} String containing the newly redirected URL. Null if a redirection doesn't exist.
+ * @return {(string|null)} String containing the newly redirected URL. Null if a redirection doesn't exist.
  */
 function isRedirectRule(url, rules) {
   if(!url) {
@@ -93,7 +93,7 @@ function isRedirectRule(url, rules) {
 /**
  * Checks if the URL is a mobile URL. (ex. en.m.wikipedia.org or mobile.twitter.com)
  * @param {string} url - The url to check.
- * @return {string|null} String containing the now non-mobile URL. Null if it's not a mobile URL.
+ * @return {(string|null)} String containing the now non-mobile URL. Null if it's not a mobile URL.
  */
 function isMobile(url) {
   if(!url) {

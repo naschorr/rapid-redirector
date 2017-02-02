@@ -61,3 +61,7 @@ body {
 .flip-text {
 	-webkit-transform: scaleX(-1);
 }
+
+.center-text {
+	text-align: center;
+}

@@ -1,10 +1,12 @@
 /* Globals */
 const POPUP_CONTAINER_CLASS = "notification-popup";
-const POPUP_SYMBOL_CLASS = "notification-popup-status icon";
-const POPUP_TEXT_CLASS = "notification-popup-status";
+const POPUP_CLOSE_ICON_CLASS = "text right close-icon";
+const POPUP_ICON_CLASS = "text center-text icon";
+const POPUP_TEXT_CLASS = "text center-text";
 const POPUP_CONTAINER_ID = "notificationPopup";
-const POPUP_SYMBOL_ID = "notificationPopupStatusIcon";
-const POPUP_TEXT_ID = "notificationPopupStatus";
+const POPUP_CLOSE_ICON_ID = "notificationPopupCloseIcon";
+const POPUP_ICON_ID = "notificationPopupIcon";
+const POPUP_TEXT_ID = "notificationPopupText";
 /* End Globals */
 
 /**
@@ -14,23 +16,24 @@ class NotificationPopup {
 	/**
 	 * Constructs the popup's properties and initiates the creation of the actual popup.
 	 * @param {(String|Array)} containerClasses - The array of classes for the container div's CSS, or the string representation of those classes.
-	 * @param {(String|Array)} symbolClasses - The array of classes for the symbol div's CSS, or the string representation of those classes.
+	 * @param {(String|Array)} iconClasses - The array of classes for the icon div's CSS, or the string representation of those classes.
 	 * @param {(String|Array)} textClasses - The array of classes for the text div's CSS, or the string representation of those classes.
 	 * @param {String} text - The text for the popup.
-	 * @param {String=} symbol - The symbol placed at the top of the popup (ex. Check mark to indicate success)
+	 * @param {String=} icon - The icon placed at the top of the popup (ex. Check mark to indicate success)
 	 */
-	constructor(containerClasses, symbolClasses, textClasses, text, symbol = '') {
+	constructor(containerClasses, iconClasses, textClasses, text, icon = '') {
 		this.containerClasses = NotificationPopup.getArray(containerClasses).append(POPUP_CONTAINER_CLASS);
-		this.symbolClasses = NotificationPopup.getArray(symbolClasses).append(POPUP_SYMBOL_CLASS);
+		this.iconClasses = NotificationPopup.getArray(iconClasses).append(POPUP_ICON_CLASS);
 		this.textClasses = NotificationPopup.getArray(textClasses).append(POPUP_TEXT_CLASS);
 
+		this.closeIconClasses = NotificationPopup.getArray(POPUP_CLOSE_ICON_CLASS);
 		this.text = text;
-		this.symbol = symbol;
+		this.icon = icon;
 		this.delay = NotificationPopup.calcTimeToReadString(this.text);
 
 		let self = this;
 		this.insertNotificationPopup(function() {
-			document.getElementById(POPUP_CONTAINER_ID).addEventListener('click', function() {
+			document.getElementById(POPUP_CLOSE_ICON_ID).addEventListener('click', function() {
 				self.removeNotificationPopup();
 			});
 			setTimeout(function() {
@@ -46,7 +49,8 @@ class NotificationPopup {
 	insertNotificationPopup(callback) {
 		let notificationHtml = 
 		`<div class="${this.containerClasses.join(' ')}" id="${POPUP_CONTAINER_ID}">
-			<div class="${this.symbolClasses.join(' ')}" id="${POPUP_SYMBOL_ID}">${this.symbol}</div>
+			<div class="${this.closeIconClasses.join(' ')}" id="${POPUP_CLOSE_ICON_ID}"></div>
+			<div class="${this.iconClasses.join(' ')}" id="${POPUP_ICON_ID}">${this.icon}</div>
 			<div class="${this.textClasses.join(' ')}" id="${POPUP_TEXT_ID}">${this.text}</div>
 		</div>`;
 

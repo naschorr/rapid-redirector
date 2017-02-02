@@ -1,3 +1,8 @@
+:root {
+	--notification-popup-padding-vertical: 10px;
+	--notification-popup-padding-horizontal: 5px;
+}
+
 body {
 	width: 600px;
 }
@@ -9,7 +14,7 @@ body {
 	height: auto;
 	left: 50%;
 	margin-left: -255px;	/* ((width / 2) + (margin / 2)) * (-1) */
-	padding: 10px 5px;
+	padding: var(--notification-popup-padding-vertical) var(--notification-popup-padding-horizontal);
 	background: rgba(105, 105, 105, 0.8);
 	border-radius: 2px;
 }
@@ -22,16 +27,31 @@ body {
 	background: rgba(31, 189, 79, 0.8);
 }
 
-.notification-popup.visible {
-	display: block;
+.notification-popup .text {
+	color: var(--light-text-color);
 }
 
-.notification-popup-status {
-	color: white;
-	text-align: center;
+.notification-popup .close-icon {
+	--icon-edge-offset: 5px;	/* The desired offset from this div's top right corner and the top right corner of notification-popup */
+	--notification-popup-icon-margin-vertical: calc(var(--notification-popup-padding-vertical) * -1);	/* Gets distance between this div's top edge, and notification-popup's top edge */
+	--notification-popup-icon-margin-horizontal: calc(var(--notification-popup-padding-horizontal) * -1);	/* Gets distance between this div's right edge, and notification-popup's right edge */
+
+	margin-top: calc(var(--notification-popup-icon-margin-vertical) + var(--icon-edge-offset));
+	margin-right: calc(var(--notification-popup-icon-margin-horizontal) + var(--icon-edge-offset));
+	padding-right: 3px;	/* The icon isn't square (16x13), so use padding to offset the right edge to make it "square" */
+
+	transition-duration: 0.25s;
 }
 
-.icon {
+.close-icon:hover {
+	opacity: 0.75;
+}
+
+.close-icon::before {
+	content: '\2716';
+}
+
+.notification-popup .icon {
 	font-size: 200%;
 }
 

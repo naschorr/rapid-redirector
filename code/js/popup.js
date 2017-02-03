@@ -61,17 +61,17 @@ function loadRedirectionState() {
  * Load the localized text from messages.json (via chrome.i18n), and apply the strings to forward facing elements of the interface.
  */
 function loadLocalizedText() {
-	document.title = chrome.i18n.getMessage('popup_title');
-	document.getElementById('logoText').innerHTML = chrome.i18n.getMessage('name');
-	document.getElementById('subText').innerHTML = POPUP_DESC;
-	document.getElementById('redirectionRules').value = chrome.i18n.getMessage('popup_add_new_rule_string');
-
 	/* Load globals */
 	ENABLED_TEXT = chrome.i18n.getMessage('popup_enabled_string');
 	DISABLED_TEXT = chrome.i18n.getMessage('popup_disabled_string');
 	ENABLE_TEXT = chrome.i18n.getMessage('popup_enable_string');
 	DISABLE_TEXT = chrome.i18n.getMessage('popup_disable_string');
 	POPUP_DESC = chrome.i18n.getMessage('popup_description');
+
+	document.title = chrome.i18n.getMessage('popup_title');
+	document.getElementById('logoText').innerHTML = chrome.i18n.getMessage('name');
+	document.getElementById('subText').innerHTML = POPUP_DESC;
+	document.getElementById('redirectionRules').value = chrome.i18n.getMessage('popup_add_new_rule_string');
 }
 /* End Methods */
 

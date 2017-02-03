@@ -315,14 +315,6 @@ function updateRulesTable() {
  * Load the localized text from messages.json (via chrome.i18n), and apply the strings to forward facing elements of the interface.
  */
 function loadLocalizedText() {
-	document.title = chrome.i18n.getMessage('options_title');
-	document.getElementById('addRuleStatus').innerHTML = chrome.i18n.getMessage('options_add_rule_string');
-	document.getElementById('addRuleMobile').placeholder = chrome.i18n.getMessage('options_new_source_placeholder');
-	document.getElementById('addRuleDesktop').placeholder = chrome.i18n.getMessage('options_new_destination_placeholder');
-	document.getElementById('addRuleConfirm').value = chrome.i18n.getMessage('options_add_rule_button');
-	document.getElementById('addRuleOrRegexText').innerHTML = chrome.i18n.getMessage('options_add_rule_or_regex');
-	document.getElementById('addRegexConfirm').value = chrome.i18n.getMessage('options_add_regex_button');
-
 	/* Load globals */
 	CURRENT_RULES_TEXT = chrome.i18n.getMessage('options_current_rules_string');
 	NO_RULES_TEXT = chrome.i18n.getMessage('options_no_rules_string');
@@ -331,6 +323,14 @@ function loadLocalizedText() {
 	NO_CYCLES_TEXT = chrome.i18n.getMessage('options_no_cycles_string');
 	MISMATCHED_SUBDOMAINS_TEXT = chrome.i18n.getMessage('options_mismatched_subdomains_string');
 	MISMATCHED_PROTOCOLS_TEXT = chrome.i18n.getMessage('options_mismatched_protocols_string');
+
+	document.title = chrome.i18n.getMessage('options_title');
+	document.getElementById('addRuleStatus').innerHTML = chrome.i18n.getMessage('options_add_rule_string');
+	document.getElementById('addRuleMobile').placeholder = chrome.i18n.getMessage('options_new_source_placeholder');
+	document.getElementById('addRuleDesktop').placeholder = chrome.i18n.getMessage('options_new_destination_placeholder');
+	document.getElementById('addRuleConfirm').value = chrome.i18n.getMessage('options_add_rule_button');
+	document.getElementById('addRuleOrRegexText').innerHTML = chrome.i18n.getMessage('options_add_rule_or_regex');
+	document.getElementById('addRegexConfirm').value = chrome.i18n.getMessage('options_add_regex_button');
 }
 /* End Methods */
 

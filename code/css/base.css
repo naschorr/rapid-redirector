@@ -3,12 +3,13 @@
 	--accent-color: #f2f2f2;		/* Light Gray */
 	--light-text-color: #ffffff;	/* White */
 	--dark-text-color: #696969;		/* Dark Gray */
+	--border-radius: 2px;
 }
 
 * {
 	font-family: "Arial", sans-serif;
 	font-size: 100%;
-	text-overflow: ellipses;
+	text-overflow: ellipsis;
 	overflow: hidden;
 	color: var(--dark-text-color);
 }
@@ -34,7 +35,7 @@ body {
 	outline: 0;
 	display: inline;
 	border: 2px solid var(--main-color);
-	border-radius: 2px;
+	border-radius: var(--border-radius);
 	margin: 2.5px;
 	cursor: pointer;
 	transition-duration: 0.25s;

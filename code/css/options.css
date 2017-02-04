@@ -1,19 +1,24 @@
 body {
-	width: 600px;
+	--body-width: 600px;
+	width: var(--body-width);
 }
 
 .notification-popup {
-	--padding-vertical: 10px;
-	--padding-horizontal: 5px;
-	position: fixed;
-	margin: 10px;
-	width: 500px;
+	--np-padding-vertical: 10px;
+	--np-padding-horizontal: 5px;
+	--np-width: 500px;
+	--np-middle: calc(var(--np-width) / 2);
+	width: var(--np-width);
 	height: auto;
-	left: 50%;
-	margin-left: -255px;	/* ((width / 2) + (margin / 2)) * (-1) */
-	padding: var(--padding-vertical) var(--padding-horizontal);
+
+	position: fixed;
+	margin: 10px 0;
+	margin-left: calc(var(--np-middle) * -1);
+	padding: var(--np-padding-vertical) var(--np-padding-horizontal);
+	left: calc(var(--body-width) / 2);
+
 	background: rgba(105, 105, 105, 0.8);
-	border-radius: 2px;
+	border-radius: var(--border-radius);
 }
 
 .notification-popup.red {
@@ -29,36 +34,42 @@ body {
 }
 
 .notification-popup .close-icon {
-	--size: 16px;
-	width: var(--size);
-	height: var(--size);
-	background-image: url("../images/icon_close_x_64.png");
+	--icon-size: 16px;
+	width: var(--icon-size);
+	height: var(--icon-size);
+
+	--icon-edge-offset: 5px;	/* The desired offset from this div's top right corner and the top right corner of notification-popup */
+	--icon-margin-vertical: calc(var(--np-padding-vertical) * -1);	/* Gets distance between this div's top edge, and notification-popup's top edge */
+	--icon-margin-horizontal: calc(var(--np-padding-horizontal) * -1);	/* Gets distance between this div's right edge, and notification-popup's right edge */
+
+	margin-top: calc(var(--icon-margin-vertical) + var(--icon-edge-offset));
+	margin-right: calc(var(--icon-margin-horizontal) + var(--icon-edge-offset));
+
+	background-image: url("../images/icon_close.png");
 	background-repeat: none;
 	background-size: contain;
 
 	transition-duration: 0.25s;
 
-	--icon-edge-offset: 5px;	/* The desired offset from this div's top right corner and the top right corner of notification-popup */
-	--margin-vertical: calc(var(--padding-vertical) * -1);	/* Gets distance between this div's top edge, and notification-popup's top edge */
-	--margin-horizontal: calc(var(--padding-horizontal) * -1);	/* Gets distance between this div's right edge, and notification-popup's right edge */
-
-	margin-top: calc(var(--margin-vertical) + var(--icon-edge-offset));
-	margin-right: calc(var(--margin-horizontal) + var(--icon-edge-offset));
+	/*
+	background-color: white;
+	-webkit-mask-box-image: url("../images/icon_close_x_64.png");
+	*/
 }
 
-.close-icon:hover {
-	background-image: url("../images/icon_close_o_64.png");	/* Can't store URLs in variables? Doing this manually instead */
+.notification-popup .close-icon:hover {
+	background-image: url("../images/icon_close_hover.png");	/* Can't store URLs in variables? Doing this manually instead */
 }
 
 .notification-popup .icon {
 	font-size: 200%;
 }
 
-.icon.alert::before {
+.notification-popup .icon.alert::before {
 	content: '\26a0';
 }
 
-.icon.success::before {
+.notification-popup .icon.success::before {
 	content: '\2713';
 }
 

@@ -277,7 +277,7 @@ function buildRulesTable() {
 
 				let buttonCell = tr.insertCell();
 				let buttonElement = document.createElement('BUTTON');
-				buttonElement.className = "delete-rule-button flip-text";
+				buttonElement.className = "delete-rule-button right";
 				buttonElement.id = `deleteRuleButton-${index}`;
 				buttonCell.appendChild(buttonElement);
 

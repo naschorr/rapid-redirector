@@ -45,16 +45,12 @@ body {
 	margin-top: calc(var(--icon-margin-vertical) + var(--icon-edge-offset));
 	margin-right: calc(var(--icon-margin-horizontal) + var(--icon-edge-offset));
 
+	/* Default white */
 	background-image: url("../images/icon_close.png");
 	background-repeat: none;
 	background-size: contain;
 
 	transition-duration: 0.25s;
-
-	/*
-	background-color: white;
-	-webkit-mask-box-image: url("../images/icon_close_x_64.png");
-	*/
 }
 
 .notification-popup .close-icon:hover {
@@ -159,23 +155,34 @@ tr:hover {
 }
 
 .delete-rule-button {
-	background-color: transparent;
-	font-size: 200%;
+	/*
+	height: 20px;	Dimensions for delete icons
+	width: 29px;
+	*/
+	height: 16px;
+	width: 16px;
+
 	border: none;
-	color: var(--main-color);
 	padding: 0px;
 	outline: 0;
-	float: right;
 	cursor: pointer;
+
+	background-color: var(--main-color);
+	background-repeat: none;
+	background-size: contain;
+	/*
+	-webkit-mask-box-image: url("../images/icon_delete.png");	Not sold on using the delete icons -- feels too heavy
+	*/
+	-webkit-mask-box-image: url("../images/icon_close.png");
+
 	transition-duration: 0.25s;
 }
 
-.delete-rule-button::before {
-	content: '\2326';
-}
-
 .delete-rule-button:hover {
-	color: #ff472a;
+	/*
+	-webkit-mask-box-image: url("../images/icon_delete_hover.png");	Not sold on using the delete icons -- feels too heavy
+	*/
+	-webkit-mask-box-image: url("../images/icon_close_hover.png");
 }
 
 .delete-rule-button:active {

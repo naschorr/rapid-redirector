@@ -59,8 +59,8 @@ body {
 	float: right;
 }
 
-.flip-text {
-	-webkit-transform: scaleX(-1);
+.no-padding {
+	padding: 0px !important;
 }
 
 .center-text {

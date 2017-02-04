@@ -114,6 +114,12 @@ body {
 	padding: 5px;
 }
 
+.current-rules-table-container {
+	overflow-x: hidden;
+	overflow-y: auto;
+	max-height: 392px;	/* Each row is 30px, so 13 rows + extra 2px for the extra (:first-child) border = 392px */
+}
+
 table {
 	border-collapse: collapse;
 	width: 100%;

@@ -10,7 +10,6 @@
 	font-family: "Arial", sans-serif;
 	font-size: 100%;
 	text-overflow: ellipsis;
-	overflow: hidden;
 	color: var(--dark-text-color);
 }
 

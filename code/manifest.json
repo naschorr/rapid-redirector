@@ -3,7 +3,7 @@
 
   "name": "__MSG_name__",
   "description": "__MSG_description__",
-  "version": "0.2.13",
+  "version": "0.2.14",
   "author": "Nick Schorr",
   "default_locale": "en",
 
@@ -24,6 +24,8 @@
   "background": {
     "scripts": [
       "js/utilities.js",
+      "js/redirection_tracker.js",
+      "js/regex_lookup.js",
       "js/redirector.js"
     ],
     "persistant": false

@@ -1,8 +1,57 @@
 /* Globals */
 const MOBILE_SUBDOMAINS = ['m', 'mobile'];
-var lastRedirectionSource;
 var regexLookup;
+var redirectionTracker;
 /* End Globals */
+
+/**
+ * Class that handles a limited redirection history and redirection checking
+ * TODO: Add tests for this class
+ */
+class RedirectionTracker {
+  /**
+   * Creates a private dictionary to hold the tab redirection data
+   */
+  constructor() {
+    this._tabs = {};
+  }
+
+  /**
+   * Adds a redirection source to the given tab
+   * @param {int} tabId - The tab's integer id
+   * @param {string} url - The url of the last page redirected from
+   */
+  addRedirection(tabId, url) {
+    this._tabs[tabId] = url;
+  }
+
+  /**
+   * Gets the most recent redirection source done in the given tab
+   * @param {int} tabId - The tab's integer id
+   * @return {string} The url of the last page redirected from
+   */
+  getRedirection(tabId) {
+    return this._tabs[tabId];
+  }
+
+  /**
+   * Checks if the given tab can redirect to the current URL
+   * @param {int} tabId - The tab's integer id
+   * @param {string} url - The url of the active tab
+   * @return {boolean} True if redirection is possible, False if it isn't
+   */
+  canRedirect(tabId, url) {
+    return (url != this.getRedirection(tabId));
+  }
+
+  /**
+   * Removes a tab's key from the dictionary
+   * @param {int} tabId - The tab's integer id
+   */
+  remove(tabId) {
+    delete this._tabs[tabId];
+  }
+}
 
 /**
  * Class that handles storage and error handling of RegExp objects to be used during page redirection.
@@ -157,24 +206,28 @@ function generateRegexLookup() {
 /* Generate the regex lookup on startup */
 regexLookup = generateRegexLookup();
 
+/* Declare the redirection tracker on startup */
+redirectionTracker = new RedirectionTracker();
+
 /* Listener Init */
 // Consider changing to event filters -- https://developer.chrome.com/extensions/event_pages#best-practices #4
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
   /* 
     Make sure that redirection is enabled, and that the url we just redirected from isn't the same as the one we're redirecting to. 
     This helps to prevent getting stuck in redirection loops, and losing control of the browser's back button.
-    TODO: Start tracking lastRedirectionSource independently for each tab instead of doing it globally.
   */
-  if (changeInfo.status == 'loading' && lastRedirectionSource != tab.url) {
+  if (changeInfo.status == 'loading' && redirectionTracker.canRedirect(tab.id, tab.url)) {
     chrome.storage.sync.get({redirection: 1}, function(items) { // Default to redirection enabled.
         if(items.redirection === 1) {
           chrome.storage.sync.get("redirectionRules", function(result) {
             let rules = result.redirectionRules;
 
             /* Check and see if the url exists in the list of redirection rules */
+            // TODO: Condense these blocks into one -- DRY
             let redirectRuleMatch = isRedirectRule(tab.url, rules);
             if(redirectRuleMatch) {
-              lastRedirectionSource = tab.url;
+              // TODO: Tabs don't always have ids.. handle this
+              redirectionTracker.addRedirection(tab.id, tab.url);
               chrome.tabs.update(tabId, {url: redirectRuleMatch});
               return;
             }
@@ -182,7 +235,8 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
             /* Check and see if the page is mobile */
             let mobileMatch = isMobile(tab.url);
             if(mobileMatch) {
-              lastRedirectionSource = tab.url;
+              // TODO: Tabs don't always have ids.. handle this
+              redirectionTracker.addRedirection(tab.id, tab.url);
               chrome.tabs.update(tabId, {url: mobileMatch});
               return;
             }
@@ -194,6 +248,12 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
   }
 });
 
+/* Remove tabs from the redirection tracker when the tab is closed */
+chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
+  redirectionTracker.remove(tabId);
+});
+
+/* Setup message handling for this script */
 chrome.runtime.onMessage.addListener(function(request) {
   if(request.deleteRule) {
     regexLookup.remove(request.deleteRule);

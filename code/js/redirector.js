@@ -57,10 +57,10 @@ function isMobile(url) {
   }
   catch (e) {
     if(e instanceof TypeError) {
-      console.error(e, '\n', `TypeError in isMobile(). Arg: "${url}". Error: ${e}`);
+      Utilities.debugLog(e, `TypeError in isMobile(). Arg: "${url}". Error: ${e}`);
     }
     else{
-      console.error(e, '\n', `Unhandled error in isMobile(). Arg: "${url}". Error: ${e}`);
+      Utilities.debugLog(e, `Unhandled error in isMobile(). Arg: "${url}". Error: ${e}`);
     }
     return null;
   }
@@ -114,36 +114,29 @@ redirectionTracker = new RedirectionTracker();
 /* Listener Init */
 // Consider changing to event filters -- https://developer.chrome.com/extensions/event_pages#best-practices #4
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+  let url = tab.url;
   /* 
     Make sure that redirection is enabled, and that the url we just redirected from isn't the same as the one we're redirecting to. 
     This helps to prevent getting stuck in redirection loops, and losing control of the browser's back button.
   */
-  if (changeInfo.status == 'loading' && redirectionTracker.canRedirect(tab.id, tab.url)) {
+  if (changeInfo.status == 'loading' && redirectionTracker.canRedirect(tabId, url)) {
     chrome.storage.sync.get({redirection: 1}, function(items) { // Default to redirection enabled.
         if(items.redirection === 1) {
           chrome.storage.sync.get("redirectionRules", function(result) {
             let rules = result.redirectionRules;
 
-            /* Check and see if the url exists in the list of redirection rules */
-            // TODO: Condense these blocks into one -- DRY
-            let redirectRuleMatch = isRedirectRule(tab.url, rules);
-            if(redirectRuleMatch) {
-              // TODO: Tabs don't always have ids.. handle this
-              redirectionTracker.addRedirection(tab.id, tab.url);
-              chrome.tabs.update(tabId, {url: redirectRuleMatch});
-              return;
+            /* Attempt to get a URL to redirect to */
+            let redirectUrl = isRedirectRule(url, rules);
+            if(redirectUrl === null) {
+              redirectUrl = isMobile(url)
             }
 
-            /* Check and see if the page is mobile */
-            let mobileMatch = isMobile(tab.url);
-            if(mobileMatch) {
+            /* Only redirect if there is a URL to redirect to */
+            if(redirectUrl) {
               // TODO: Tabs don't always have ids.. handle this
-              redirectionTracker.addRedirection(tab.id, tab.url);
-              chrome.tabs.update(tabId, {url: mobileMatch});
-              return;
+              redirectionTracker.addRedirection(tabId, url);
+              chrome.tabs.update(tabId, {url: redirectUrl});
             }
-
-            /* Else do nothing */
           });
         }
     });

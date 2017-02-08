@@ -1,5 +1,6 @@
 /**
  * Class that handles a limited redirection history and redirection checking
+ * This is basically just a dict wrapper with some extra functionality (and room for expansion)
  * TODO: Add tests for this class
  */
 class RedirectionTracker {
@@ -35,7 +36,9 @@ class RedirectionTracker {
    * @return {boolean} True if redirection is possible, False if it isn't
    */
   canRedirect(tabId, url) {
-    return (url != this.getRedirection(tabId));
+    let redirection = this.getRedirection(tabId);
+
+    return !((!redirection) || (url == redirection));
   }
 
   /**

@@ -121,24 +121,24 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
   */
   if (changeInfo.status == 'loading' && redirectionTracker.canRedirect(tabId, url)) {
     chrome.storage.sync.get({redirection: 1}, function(items) { // Default to redirection enabled.
-        if(items.redirection === 1) {
-          chrome.storage.sync.get("redirectionRules", function(result) {
-            let rules = result.redirectionRules;
+      if(items.redirection === 1) {
+        chrome.storage.sync.get("redirectionRules", function(result) {
+          let rules = result.redirectionRules;
 
-            /* Attempt to get a URL to redirect to */
-            let redirectUrl = isRedirectRule(url, rules);
-            if(redirectUrl === null) {
-              redirectUrl = isMobile(url)
-            }
+          /* Attempt to get a URL to redirect to */
+          let redirectUrl = isRedirectRule(url, rules);
+          if(redirectUrl === null) {
+            redirectUrl = isMobile(url)
+          }
 
-            /* Only redirect if there is a URL to redirect to */
-            if(redirectUrl) {
-              // TODO: Tabs don't always have ids.. handle this
-              redirectionTracker.addRedirection(tabId, url);
-              chrome.tabs.update(tabId, {url: redirectUrl});
-            }
-          });
-        }
+          /* Only redirect if there is a URL to redirect to */
+          if(redirectUrl) {
+            // TODO: Tabs don't always have valid IDs (chrome.tabs.TAB_ID_NONE = -1)... handle this
+            redirectionTracker.addRedirection(tabId, url);
+            chrome.tabs.update(tabId, {url: redirectUrl});
+          }
+        });
+      }
     });
   }
 });

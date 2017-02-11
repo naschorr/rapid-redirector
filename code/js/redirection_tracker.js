@@ -38,7 +38,7 @@ class RedirectionTracker {
   canRedirect(tabId, url) {
     let redirection = this.getRedirection(tabId);
 
-    return !((!redirection) || (url == redirection));
+    return (!redirection || (url != redirection));
   }
 
   /**

@@ -83,11 +83,11 @@ describe("the RedirectionTracker class", function() {
 			expect(redirectionTracker.canRedirect(tabA, stringA)).toEqual(false);
 		});		
 
-		it("should return false when given an invalid tabId, and any string", function() {
+		it("should return true when given an non-existant tabId, and any string", function() {
 			let someTab = 123456789;
 			redirectionTracker._tabs[tabA] = stringA;
 
-			expect(redirectionTracker.canRedirect(someTab, stringB)).toEqual(false);
+			expect(redirectionTracker.canRedirect(someTab, stringB)).toEqual(true);
 		});
 	});
 });

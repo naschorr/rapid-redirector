@@ -2,8 +2,11 @@
 const MOBILE_SUBDOMAINS = ["m", "mobile", "mobi"];
 var regexLookup;
 var redirectionTracker;
+let NAME;
+let REDIRECTING_TO;
 /* End Globals */
 
+/* Methods */
 /**
  * Checks if the URL can be found in the supplied set of redirection rules.
  * @param {string} url - The url to check.
@@ -105,6 +108,37 @@ function generateRegexLookup() {
 	return regexLookup;
 }
 
+/**
+ * Push a browser notification to the user to alert when they're being redirected.
+ * @param {string} redirectUrl - The url that's being redirected to
+ */
+function pushRedirectNotification(redirectUrl) {
+	// Format the notification with NotificationOptions
+	let options = {
+		type: "basic",
+		title: NAME,
+		message: `${REDIRECTING_TO}:\n${redirectUrl}`,
+		iconUrl: "images/icon_512.png"
+	};
+
+	// Push the notification
+	chrome.notifications.create(NAME, options);
+}
+
+/**
+ * Load the localized text from messages.json (via chrome.i18n) for later use.
+ */
+function loadLocalizedText() {
+	NAME = Utilities.loadI18n("name");
+	REDIRECTING_TO = Utilities.loadI18n("notification_redirecting_to");
+}
+/* End Methods */
+
+
+/* Localization Init */
+loadLocalizedText();
+/* End Localization Init */
+
 /* Generate the regex lookup on startup */
 regexLookup = generateRegexLookup();
 
@@ -133,6 +167,9 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 
 					/* Only redirect if there is a URL to redirect to */
 					if(redirectUrl) {
+						// Notify the user that a redirection is happening per the 7/5/17(?) web store policy update (link?)
+						pushRedirectNotification(redirectUrl);
+
 						// TODO: Tabs don't always have valid IDs (chrome.tabs.TAB_ID_NONE = -1)... handle this
 						redirectionTracker.addRedirection(tabId, url);
 						chrome.tabs.update(tabId, {url: redirectUrl});

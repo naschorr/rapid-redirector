@@ -3,7 +3,7 @@
 
   "name": "__MSG_name__",
   "description": "__MSG_description__",
-  "version": "0.2.15",
+  "version": "0.3.0",
   "author": "Nick Schorr",
   "default_locale": "en",
 
@@ -17,7 +17,7 @@
 
   "browser_action": {
     "default_icon": "images/icon_38.png",
-    "default_title": "__MSG_name__",
+    "default_title": "__MSG_popup_title__",
     "default_popup": "html/popup.html"
   },
 
@@ -33,6 +33,7 @@
 
   "permissions": [
     "tabs",
-    "storage"
+    "storage",
+    "notifications"
   ]
 }

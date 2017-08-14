@@ -21,7 +21,7 @@ class NotificationPopup {
 	 * @param {String} text - The text for the popup.
 	 * @param {String=} icon - The icon placed at the top of the popup (ex. Check mark to indicate success)
 	 */
-	constructor(containerClasses, iconClasses, textClasses, text, icon = '') {
+	constructor(containerClasses, iconClasses, textClasses, text, icon = "") {
 		this.containerClasses = NotificationPopup.getArray(containerClasses).append(POPUP_CONTAINER_CLASS);
 		this.iconClasses = NotificationPopup.getArray(iconClasses).append(POPUP_ICON_CLASS);
 		this.textClasses = NotificationPopup.getArray(textClasses).append(POPUP_TEXT_CLASS);
@@ -33,7 +33,7 @@ class NotificationPopup {
 
 		let self = this;
 		this.insertNotificationPopup(function() {
-			document.getElementById(POPUP_CLOSE_ICON_ID).addEventListener('click', function() {
+			document.getElementById(POPUP_CLOSE_ICON_ID).addEventListener("click", function() {
 				self.removeNotificationPopup();
 			});
 			setTimeout(function() {
@@ -54,7 +54,7 @@ class NotificationPopup {
 			<div class="${this.textClasses.join(' ')}" id="${POPUP_TEXT_ID}">${this.text}</div>
 		</div>`;
 
-		document.body.insertAdjacentHTML('afterbegin', notificationHtml);
+		document.body.insertAdjacentHTML("afterbegin", notificationHtml);
 
 		if(callback) {
 			callback();

@@ -99,7 +99,7 @@ function calcSubdomainDifference(source, destination) {
 	}
 
 	/* Attempt to remove the smaller domain from the larger domain. */
-	var postReplace = longer.replace(shorter, '');
+	var postReplace = longer.replace(shorter, "");
 
 	/* If the removal wasn't successful, then return a difference of 0. */
 	if(postReplace.length === longer.length) {
@@ -109,7 +109,7 @@ function calcSubdomainDifference(source, destination) {
 	/* Count the periods remaining after the removal operation. This can roughly determine if there was a difference in number of subdomains. */
 	var periodCounter = 0;
 	for(var i = 0; i < postReplace.length; i++) {
-		if(postReplace.charAt(i) === '.') {
+		if(postReplace.charAt(i) === ".") {
 			periodCounter++;
 		}
 	}
@@ -126,7 +126,7 @@ function calcSubdomainDifference(source, destination) {
 function hasMismatchedProtocol(source, destination) {
 	var protocolRegex = new RegExp("^.+?:\/\/");
 
-	return (protocolRegex.test(source) !== protocolRegex.test(destination))
+	return (protocolRegex.test(source) !== protocolRegex.test(destination));
 }
 
 /**
@@ -185,23 +185,30 @@ function isValidInput(source, destination, rules) {
  * @param {boolean} isRegex - True if the rule uses regex, False if it doesn't.
  */
 function storeRule(source, destination, isRegex) {
-	// Object format = {src:"source URL (or regex pattern)", dest:"destination URL", regex:boolean if .src is a regex}
-	chrome.storage.sync.get("redirectionRules", function(result) {
-		var rules = result.redirectionRules || [];
+	try{
+		// Object format = {src:"source URL (or regex pattern)", dest:"destination URL", regex:boolean if .src is a regex}
+		chrome.storage.sync.get("redirectionRules", function(result) {
+			var rules = result.redirectionRules || [];
 
-		if(isValidInput(source, destination, rules)) {
-			source = source.trim();
-			rules.push({src:source, dest:destination.trim(), regex:isRegex});
+			if(isValidInput(source, destination, rules)) {
+				source = source.trim();
+				rules.push({src:source, dest:destination.trim(), regex:isRegex});
 
-			chrome.storage.sync.set({redirectionRules: rules}, function() {
-				chrome.runtime.sendMessage({addRule: source});
-				Utilities.debugLog(`Added new rule: '${source}' -> '${destination}', regex: ${isRegex}`);
-				updateRulesTable();
-			})
-		}else{
-			Utilities.debugLog(`Failed to add rule: '${source}' -> '${destination}', regex: ${isRegex}. Rule is either empty, a duplicate, or produces a cycle.`);
+				chrome.storage.sync.set({redirectionRules: rules}, function() {
+					chrome.runtime.sendMessage({addRule: source});
+					Utilities.debugLog(`Added new rule: '${source}' -> '${destination}', regex: ${isRegex}`);
+					updateRulesTable();
+				});
+			}else{
+				Utilities.debugLog(`Failed to add rule: '${source}' -> '${destination}', regex: ${isRegex}. Rule is either empty, a duplicate, or produces a cycle.`);
+			}
+		});
+	}
+	catch(e) {
+		if(e instanceof TypeError){
+			console.error(`TypeError in ${arguments.callee}`);
 		}
-	});
+	}
 }
 
 /**
@@ -217,16 +224,23 @@ function deleteRule(buttonId) {
 		return;
 	}
 
-	chrome.storage.sync.get("redirectionRules", function(result) {
-		var rules = result.redirectionRules || [];
-		var removed = rules.splice(buttonIndex, 1)[0];
+	try{
+		chrome.storage.sync.get("redirectionRules", function(result) {
+			var rules = result.redirectionRules || [];
+			var removed = rules.splice(buttonIndex, 1)[0];
 
-		chrome.storage.sync.set({redirectionRules: rules}, function() {
-			chrome.runtime.sendMessage({deleteRule: removed.src});
-			Utilities.debugLog(`Rule associated with ${buttonId} has been deleted`);
-			updateRulesTable();
+			chrome.storage.sync.set({redirectionRules: rules}, function() {
+				chrome.runtime.sendMessage({deleteRule: removed.src});
+				Utilities.debugLog(`Rule associated with ${buttonId} has been deleted`);
+				updateRulesTable();
+			});
 		});
-	});
+	}
+	catch(e) {
+		if(e instanceof TypeError){
+			console.error(`TypeError in ${arguments.callee}`);
+		}
+	}
 }
 
 /**
@@ -234,61 +248,68 @@ function deleteRule(buttonId) {
  * @param {string} buttonId - The id of the button to receive the listener.
  */
 function addBtnListener(buttonId) {
-	document.getElementById(buttonId).addEventListener('click', function() {
+	document.getElementById(buttonId).addEventListener("click", function() {
 		Utilities.debugLog(`listener triggered for ${buttonId}`);
 		deleteRule(buttonId);
-	})
+	});
 }
 
 /**
  * Builds a formatted HTML table of all current redirection rules, as well as sets up the buttons used to delete individual rules.
  */
 function buildRulesTable() {
-	chrome.storage.sync.get("redirectionRules", function(result) {
-		let rules = result.redirectionRules || [];
+	try{
+		chrome.storage.sync.get("redirectionRules", function(result) {
+			let rules = result.redirectionRules || [];
 
-		if(rules.length > 0) {
-			let tableContainer = document.getElementById('currentRulesTableContainer');
-			document.getElementById('currentRulesStatus').innerHTML = CURRENT_RULES_TEXT;
+			if(rules.length > 0) {
+				let tableContainer = document.getElementById("currentRulesTableContainer");
+				document.getElementById("currentRulesStatus").innerHTML = CURRENT_RULES_TEXT;
 
-			let table = document.createElement('table');
-			table.id = 'currentRulesTable';
-			tableContainer.appendChild(table);
+				let table = document.createElement("table");
+				table.id = "currentRulesTable";
+				tableContainer.appendChild(table);
 
-			/* Generate the table */
-			rules.forEach(function(rule, index) {
-				/* Build a new row for the table */
-				let tr = table.insertRow();
+				/* Generate the table */
+				rules.forEach(function(rule, index) {
+					/* Build a new row for the table */
+					let tr = table.insertRow();
 
-				/* Add in source cell */
-				tr.insertCell().appendChild(document.createTextNode(rule.src));
+					/* Add in source cell */
+					tr.insertCell().appendChild(document.createTextNode(rule.src));
 
-				/* Add in arrow cell and add in regex class if the rule uses regex */
-				let arrow = tr.insertCell();
-				let span = document.createElement('span');
-				span.className = 'arrow';
-				if(rule.regex) {
-					span.classList.add("regex-rule");
-				}
-				arrow.appendChild(span);
+					/* Add in arrow cell and add in regex class if the rule uses regex */
+					let arrow = tr.insertCell();
+					let span = document.createElement("span");
+					span.className = "arrow";
+					if(rule.regex) {
+						span.classList.add("regex-rule");
+					}
+					arrow.appendChild(span);
 
-				/* Add in destination cell */
-				tr.insertCell().appendChild(document.createTextNode(rule.dest));
+					/* Add in destination cell */
+					tr.insertCell().appendChild(document.createTextNode(rule.dest));
 
-				let buttonCell = tr.insertCell();
-				let buttonElement = document.createElement('BUTTON');
-				buttonElement.className = "delete-rule-button right";
-				buttonElement.id = `deleteRuleButton-${index}`;
-				buttonCell.appendChild(buttonElement);
+					let buttonCell = tr.insertCell();
+					let buttonElement = document.createElement("BUTTON");
+					buttonElement.className = "delete-rule-button right";
+					buttonElement.id = `deleteRuleButton-${index}`;
+					buttonCell.appendChild(buttonElement);
 
-				/* Add the listener to the button */
-				addBtnListener(`deleteRuleButton-${index}`);
-			});
+					/* Add the listener to the button */
+					addBtnListener(`deleteRuleButton-${index}`);
+				});
 
-		}else{
-			document.getElementById('currentRulesStatus').innerHTML = NO_RULES_TEXT;
+			}else{
+				document.getElementById("currentRulesStatus").innerHTML = NO_RULES_TEXT;
+			}
+		});
+	}
+	catch(e) {
+		if(e instanceof TypeError){
+			console.error(`TypeError in ${arguments.callee}`, e);
 		}
-	});
+	}
 }
 
 /**
@@ -296,7 +317,7 @@ function buildRulesTable() {
  */
 function deleteRulesTable() {
 	/* Should also delete the listeners that the buttons reference. */
-	var table = document.getElementById('currentRulesTable');
+	var table = document.getElementById("currentRulesTable");
 	if(table) {
 		/* Don't delete the table if it doesn't exist. */
 		table.parentNode.removeChild(table);
@@ -315,50 +336,51 @@ function updateRulesTable() {
  * Load the localized text from messages.json (via chrome.i18n), and apply the strings to forward facing elements of the interface.
  */
 function loadLocalizedText() {
-	/* Load globals */
-	CURRENT_RULES_TEXT = chrome.i18n.getMessage('options_current_rules_string');
-	NO_RULES_TEXT = chrome.i18n.getMessage('options_no_rules_string');
-	NO_EMPTY_TEXT = chrome.i18n.getMessage('options_no_empty_rule_string');
-	NO_DUPS_TEXT = chrome.i18n.getMessage('options_no_duplicates_string');
-	NO_CYCLES_TEXT = chrome.i18n.getMessage('options_no_cycles_string');
-	MISMATCHED_SUBDOMAINS_TEXT = chrome.i18n.getMessage('options_mismatched_subdomains_string');
-	MISMATCHED_PROTOCOLS_TEXT = chrome.i18n.getMessage('options_mismatched_protocols_string');
+		/* Load globals */
+	CURRENT_RULES_TEXT = Utilities.loadI18n("options_current_rules_string");
+	NO_RULES_TEXT = Utilities.loadI18n("options_no_rules_string");
+	NO_EMPTY_TEXT = Utilities.loadI18n("options_no_empty_rule_string");
+	NO_DUPS_TEXT = Utilities.loadI18n("options_no_duplicates_string");
+	NO_CYCLES_TEXT = Utilities.loadI18n("options_no_cycles_string");
+	MISMATCHED_SUBDOMAINS_TEXT = Utilities.loadI18n("options_mismatched_subdomains_string");
+	MISMATCHED_PROTOCOLS_TEXT = Utilities.loadI18n("options_mismatched_protocols_string");
 
-	document.title = chrome.i18n.getMessage('options_title');
-	document.getElementById('addRuleStatus').innerHTML = chrome.i18n.getMessage('options_add_rule_string');
-	document.getElementById('addRuleMobile').placeholder = chrome.i18n.getMessage('options_new_source_placeholder');
-	document.getElementById('addRuleDesktop').placeholder = chrome.i18n.getMessage('options_new_destination_placeholder');
-	document.getElementById('addRuleConfirm').value = chrome.i18n.getMessage('options_add_rule_button');
-	document.getElementById('addRuleOrRegexText').innerHTML = chrome.i18n.getMessage('options_add_rule_or_regex');
-	document.getElementById('addRegexConfirm').value = chrome.i18n.getMessage('options_add_regex_button');
+	document.title = Utilities.loadI18n("options_title");
+	document.getElementById("addRuleStatus").innerHTML = Utilities.loadI18n("options_add_rule_string");
+	document.getElementById("addRuleMobile").placeholder = Utilities.loadI18n("options_new_source_placeholder");
+	document.getElementById("addRuleDesktop").placeholder = Utilities.loadI18n("options_new_destination_placeholder");
+	document.getElementById("addRuleConfirm").value = Utilities.loadI18n("options_add_rule_button");
+	document.getElementById("addRuleOrRegexText").innerHTML = Utilities.loadI18n("options_add_rule_or_regex");
+	document.getElementById("addRegexConfirm").value = Utilities.loadI18n("options_add_regex_button");
 }
 /* End Methods */
 
+
 /* Localization Init */
-document.addEventListener('DOMContentLoaded', loadLocalizedText());
+document.addEventListener("DOMContentLoaded", loadLocalizedText());
 /* End Localization */
 
 /* Listener Init */
-document.addEventListener('DOMContentLoaded', buildRulesTable());
+document.addEventListener("DOMContentLoaded", buildRulesTable());
 
-var mobileInputElement = document.getElementById('addRuleMobile');
-var desktopInputElement = document.getElementById('addRuleDesktop');
+var mobileInputElement = document.getElementById("addRuleMobile");
+var desktopInputElement = document.getElementById("addRuleDesktop");
 
-var addRuleBtn = document.getElementById('addRuleConfirm');
-addRuleBtn.addEventListener('click', function() {
+var addRuleBtn = document.getElementById("addRuleConfirm");
+addRuleBtn.addEventListener("click", function() {
 	/* Store the rule */
 	storeRule(mobileInputElement.value, desktopInputElement.value, false);
 	/* Clear the input box's text */
-	mobileInputElement.value = '';
-	desktopInputElement.value = '';
+	mobileInputElement.value = "";
+	desktopInputElement.value = "";
 });
 
-var addRegexBtn = document.getElementById('addRegexConfirm');
-addRegexBtn.addEventListener('click', function() {
+var addRegexBtn = document.getElementById("addRegexConfirm");
+addRegexBtn.addEventListener("click", function() {
 	/* Store the rule */
 	storeRule(mobileInputElement.value, desktopInputElement.value, true);
 	/* Clear the input box's text */
-	mobileInputElement.value = '';
-	desktopInputElement.value = '';
+	mobileInputElement.value = "";
+	desktopInputElement.value = "";
 });
 /* End Listener Init */

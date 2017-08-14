@@ -1,6 +1,6 @@
 {
 	"name": {
-		"message": "Immobile",
+		"message": "Rapid Redirector",
 		"description": "Extension name"
 	},
 
@@ -10,7 +10,7 @@
 	},
 
 	"popup_title": {
-		"message": "Immobile Redirector",
+		"message": "Rapid Redirector",
 		"description": "Popup page title"
 	},
 
@@ -45,7 +45,7 @@
 	},
 
 	"options_title": {
-		"message": "Immobile Options",
+		"message": "Rapid Redirector Options",
 		"description": "Options page title."
 	},
 
@@ -112,5 +112,10 @@
 	"options_mismatched_protocols_string": {
 		"message": "Success. However, there may be issues due to one of the addresses having a protocol, and the other not having one.",
 		"description": "Alert string to let the user know that they may run into issues by because one of the addresses has a protocol and the other doesn't. (ex. chrome://newtab -> reddit.com won't work, but chrome://newtab -> https://reddit.com will work.)"
+	},
+
+	"notification_redirecting_to": {
+		"message": "Redirecting to",
+		"description": "Localized text for 'Redirecting to'. To be used in: 'Redirecting to: <url>' message inside of browser notifications"
 	}
 }

@@ -8,10 +8,35 @@ const BROWSER_ACTION_INACTIVE_ICON_PATH = "../images/icon_inactive_38.png";
  * Class that handles storage and error handling of RegExp objects to be used during page redirection.
  */
 class Utilities {
+	/**
+	 * @ignore
+	 * Loads a localized string of text (via chrome.i18n)
+	 */
+	static loadI18n(message) {
+		if(chrome.i18n == undefined) {
+			console.error(`Chrome.i18n undefined, can't load the text '${message}'`);
+			return message;
+		}
+
+		try{
+			return chrome.i18n.getMessage(message);
+		}
+		catch(e) {
+			if(e instanceof TypeError){
+				console.error(`TypeError in ${arguments.callee} for text '${message}'`);
+				return message;
+			}else{
+				console.error(`Unhandled error in ${arguments.callee} for text '${message}'`);
+				return message;
+			}
+		}
+
+	}
+
 	/** 
 	 * @ignore
 	 * Outputs the currently saved redirection rules to the console.
- 	 */
+	 */
 	static dumpCurrentRules() {
 		chrome.storage.sync.get("redirectionRules", function(result) {
 			let rules = result.redirectionRules || [];
@@ -33,7 +58,7 @@ class Utilities {
 	 */
 	static clearRules() {
 		chrome.storage.sync.set({redirectionRules: []}, function() {
-			console.log('Redirection rules cleared');
+			console.log("Redirection rules cleared");
 		});
 	}
 
@@ -72,7 +97,7 @@ class Utilities {
 
 		chrome.browserAction.setIcon({
 			path: {"38": `${iconPath}`}
-	    });
+		});
 	}
 }
 
@@ -88,7 +113,7 @@ String.prototype.insertAt = function(insertStr, index=0) {
 	}
 
 	return this.substring(0, index) + insertStr + this.substring(index, this.length);
-}
+};
 
 /**
  * Like String.slice(), except it removes the characters between the indicies (inclusive), and returns the rest as one string.
@@ -105,7 +130,7 @@ String.prototype.antiSlice = function(startIndex, endIndex) {
 	}
 
 	return this.substring(0, startIndex) + this.substring(endIndex, this.length);
-}
+};
 
 /**
  * Pushes an object onto the end of an array, and then returns the new array. Basically the same as Python's array.append().
@@ -119,4 +144,4 @@ Array.prototype.append = function() {
 		self.push(arg);
 	});
 	return this;
-}
+};

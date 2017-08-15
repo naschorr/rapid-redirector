@@ -66,9 +66,9 @@ function loadLocalizedText() {
 	DISABLED_TEXT = chrome.i18n.getMessage("popup_disabled_string");
 	ENABLE_TEXT = chrome.i18n.getMessage("popup_enable_string");
 	DISABLE_TEXT = chrome.i18n.getMessage("popup_disable_string");
-	POPUP_DESC = chrome.i18n.getMessage("popup_description");
+	POPUP_DESC = chrome.i18n.getMessage("description");
 
-	document.title = chrome.i18n.getMessage("popup_title");
+	document.title = chrome.i18n.getMessage("name");
 	document.getElementById("logoText").innerHTML = chrome.i18n.getMessage("name");
 	document.getElementById("subText").innerHTML = POPUP_DESC;
 	document.getElementById("redirectionRules").value = chrome.i18n.getMessage("popup_add_new_rule_string");

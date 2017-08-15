@@ -1,5 +1,5 @@
 body {
-	width: 350px;
+	width: 365px;
 }
 
 .top-container {
@@ -12,6 +12,7 @@ body {
 	display: table-row;
 	color: var(--light-text-color);
 	width: 100%;
+	white-space: nowrap;
 }
 
 .logo-spacer{

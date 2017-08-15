@@ -15,16 +15,6 @@
 		"description": "Extension description"
 	},
 
-	"popup_title": {
-		"message": "Rapid Redirector",
-		"description": "Popup page title"
-	},
-
-	"popup_description": {
-		"message": "Automatic mobile to desktop webpage redirection",
-		"description": "Popup page's short description of the extension. Goes right below the extension's name."
-	},
-
 	"popup_enabled_string": {
 		"message": "enabled",
 		"description": "'enabled' string."

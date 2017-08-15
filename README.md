@@ -29,7 +29,8 @@ Adding a rule is simple, all you need to do is enter in your desired source and 
 Likewise, if your rule utilizes a regular expression, then you can enter the expression into the source domain field, as well as the desired destination domain that you would like to redirect to. After that, just click 'Add Regex.' These rules will show up in the table below with an orange arrow, to denote that they're regular expression based rules.
 
 <p align="center"><img src="https://raw.githubusercontent.com/naschorr/rapid-redirector/master/resources/add_regex.png"/></p>
-> This rule will always redirect to the Python 3.5 documentation, even if the link I clicked on was for Python 2.7.
+
+>This rule will always redirect to the Python 3.5 documentation, even if the link I clicked on was for Python 2.7.
 
 However, you may see some errors pop up for some of the rules that you may be trying to add. These errors can be removed by clicking on the X in the top right corner, or by just waiting for them to disappear on their own.
 

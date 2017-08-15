@@ -62,36 +62,42 @@ function loadRedirectionState() {
  */
 function loadLocalizedText() {
 	/* Load globals */
-	ENABLED_TEXT = chrome.i18n.getMessage('popup_enabled_string');
-	DISABLED_TEXT = chrome.i18n.getMessage('popup_disabled_string');
-	ENABLE_TEXT = chrome.i18n.getMessage('popup_enable_string');
-	DISABLE_TEXT = chrome.i18n.getMessage('popup_disable_string');
-	POPUP_DESC = chrome.i18n.getMessage('popup_description');
+	ENABLED_TEXT = chrome.i18n.getMessage("popup_enabled_string");
+	DISABLED_TEXT = chrome.i18n.getMessage("popup_disabled_string");
+	ENABLE_TEXT = chrome.i18n.getMessage("popup_enable_string");
+	DISABLE_TEXT = chrome.i18n.getMessage("popup_disable_string");
+	POPUP_DESC = chrome.i18n.getMessage("popup_description");
 
-	document.title = chrome.i18n.getMessage('popup_title');
-	document.getElementById('logoText').innerHTML = chrome.i18n.getMessage('name');
-	document.getElementById('subText').innerHTML = POPUP_DESC;
-	document.getElementById('redirectionRules').value = chrome.i18n.getMessage('popup_add_new_rule_string');
+	document.title = chrome.i18n.getMessage("popup_title");
+	document.getElementById("logoText").innerHTML = chrome.i18n.getMessage("name");
+	document.getElementById("subText").innerHTML = POPUP_DESC;
+	document.getElementById("redirectionRules").value = chrome.i18n.getMessage("popup_add_new_rule_string");
+	document.getElementById("helpBtn").value = chrome.i18n.getMessage("popup_help_button_string");
 }
 /* End Methods */
 
 /* Localization Init */
-document.addEventListener('DOMContentLoaded', loadLocalizedText());
+document.addEventListener("DOMContentLoaded", loadLocalizedText());
 /* End Localization */
 
 /* Listener Init */
-document.addEventListener('DOMContentLoaded', loadRedirectionState());
+document.addEventListener("DOMContentLoaded", loadRedirectionState());
 
-var toggleRedirectionBtn = document.getElementById('toggleRedirection');
-var subTextElement = document.getElementById('subText');
-toggleRedirectionBtn.addEventListener('click', function() {
+var toggleRedirectionBtn = document.getElementById("toggleRedirection");
+var subTextElement = document.getElementById("subText");
+toggleRedirectionBtn.addEventListener("click", function() {
 	chrome.storage.sync.get({redirection: 1}, function(result) {
 		saveRedirectionState(result.redirection ^= 1);
-	})
+	});
 });
 
-var redirectionRulesBtn = document.getElementById('redirectionRules');
-redirectionRulesBtn.addEventListener('click', function() {
-	chrome.tabs.create({'url': `chrome://extensions/?options=${chrome.runtime.id}`});
+let redirectionRulesBtn = document.getElementById("redirectionRules");
+redirectionRulesBtn.addEventListener("click", function() {
+	chrome.tabs.create({"url": `chrome://extensions/?options=${chrome.runtime.id}`});
+});
+
+let helpBtn = document.getElementById("helpBtn");
+helpBtn.addEventListener("click", function() {
+	chrome.tabs.create({"url": chrome.runtime.getManifest().homepage_url});
 });
 /* End Listener Init */

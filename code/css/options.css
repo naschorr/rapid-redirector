@@ -108,6 +108,7 @@ body {
 .add-rule-button-container {
 	height: 30px;
 	margin-right: 5px;
+	float: right;
 }
 
 .current-rules-container {

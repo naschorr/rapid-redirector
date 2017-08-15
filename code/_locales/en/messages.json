@@ -4,8 +4,14 @@
 		"description": "Extension name"
 	},
 
+	"short_name": {
+		"message": "Rapid",
+		"description": "Shortened extension name"
+	},
+
+
 	"description": {
-		"message": "Automatically redirects certain mobile web pages to their desktop version, and allows custom redirections based on text replacement and regular expressions.",
+		"message": "Easy, automatic, and customizable webpage redirection.",
 		"description": "Extension description"
 	},
 
@@ -42,6 +48,11 @@
 	"popup_add_new_rule_string": {
 		"message": "Add Redirection Rule",
 		"description": "Text for a button that redirects the user to the page that lets them add a new rule."
+	},
+
+	"popup_help_button_string": {
+		"message": "?",
+		"description": "String that the user can click on for help with using the extension."
 	},
 
 	"options_title": {

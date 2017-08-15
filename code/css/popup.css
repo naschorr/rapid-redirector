@@ -43,8 +43,17 @@ body {
 .button-container {
 	padding: 5px;
 	overflow: auto;
+	display: flex;
 }
 
 .wide {
-	width: 47%;
+	flex-grow: 3;
+}
+
+.narrow {
+	flex-grow: 1;
+}
+
+.popup-spacer {
+	width: 3px;
 }

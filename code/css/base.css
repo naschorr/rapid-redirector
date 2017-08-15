@@ -50,14 +50,6 @@ body {
 	top: 1px;
 }
 
-.left {
-	float: left;
-}
-
-.right {
-	float: right;
-}
-
 .no-padding {
 	padding: 0px !important;
 }

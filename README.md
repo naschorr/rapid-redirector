@@ -30,7 +30,7 @@ Likewise, if your rule utilizes a regular expression, then you can enter the exp
 
 <p align="center"><img src="https://raw.githubusercontent.com/naschorr/rapid-redirector/master/resources/add_regex.png"/></p>
 
->This rule will always redirect to the Python 3.5 documentation, even if the link I clicked on was for Python 2.7.
+>This rule will always redirect to the Python 3.5 documentation, even if the link I clicked on was for another version of Python, like 2.7 or 3.3.
 
 However, you may see some errors pop up for some of the rules that you may be trying to add. These errors can be removed by clicking on the X in the top right corner, or by just waiting for them to disappear on their own.
 

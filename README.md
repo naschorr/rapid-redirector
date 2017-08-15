@@ -1,3 +1,5 @@
+<p align="center"><img src="https://github.com/naschorr/rapid-redirector/blob/master/resources/small_tile.png?raw=true"/></p>
+
 # Rapid Redirector
 Rapid Redirector is a Chrome extension that makes automated webpage redirection simple. It does this through two main functions. 
 

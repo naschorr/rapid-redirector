@@ -8,9 +8,9 @@ First, it will automatically try to determine if the newly visited page is meant
 However, since this won't cover all cases, the extension also allows you to create your own redirections that will be performed when certain pages are navigated to. These *redirection rules* consist of two parts: a source domain and destination domain. It works by checking for an instance of the source domain in the URL of the page you just accessed, and then swapping out the source for the destination domain. Just like a find and replace command that you might use in a text editor. On top of that, it also allows you to specify the source domains as regular expressions, and then swap the destination domain into the matched text from the regular expression. These let you further expand the mobile redirection capabilities, as well as new rules to aid in your own browsing.
 
 ## Installation
-Just download and unzip the repo, navigate to chrome://extensions/, enable developer mode, and load the unpacked extension.
+Get it on the [Chrome Web Store](https://chrome.google.com/webstore/detail/rapid-redirector/ghdlibhfmakfnlbfeofbcndhkoeagjod)!
 
-A proper Chrome Web Store release is coming soon!
+Or, just download and unzip the repo, navigate to chrome://extensions/, enable developer mode, and load the unpacked extension.
 
 ## Usage
 After installation, clicking on the icon ![Extension icon active][small icon active] will bring up a popup interface with two basic options:

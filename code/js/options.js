@@ -7,6 +7,8 @@ let NO_CYCLES_TEXT;
 let MISMATCHED_SUBDOMAINS_TEXT;
 let MISMATCHED_PROTOCOLS_TEXT;
 let MISMATCHED_SUBSTITUTIONS_TEXT;
+let REGEX_ARROW
+let NON_REGEX_ARROW;
 /* End Globals */
 
 /* Note: 'Rule' refers to the combination of the source and destination domains. */
@@ -322,13 +324,20 @@ function buildRulesTable() {
 					/* Add in source cell */
 					tr.insertCell().appendChild(document.createTextNode(rule.src));
 
-					/* Add in arrow cell and add in regex class if the rule uses regex */
+					/* Add in arrow cell and add in regex class if the rule uses regex, plus appropriate tooltip */
 					let arrow = tr.insertCell();
 					let span = document.createElement("span");
 					span.className = "arrow";
+					span.classList.add("tooltip");
+					let tooltipText = document.createElement("span");
+					tooltipText.classList.add("tooltip-text")
 					if(rule.regex) {
 						span.classList.add("regex-rule");
+						tooltipText.innerHTML = REGEX_ARROW;
+					}else{
+						tooltipText.innerHTML = NON_REGEX_ARROW;
 					}
+					span.appendChild(tooltipText);
 					arrow.appendChild(span);
 
 					/* Add in destination cell */
@@ -389,6 +398,8 @@ function loadLocalizedText() {
 	MISMATCHED_SUBDOMAINS_TEXT = Utilities.loadI18n("options_mismatched_subdomains_string");
 	MISMATCHED_PROTOCOLS_TEXT = Utilities.loadI18n("options_mismatched_protocols_string");
 	MISMATCHED_SUBSTITUTIONS_TEXT = Utilities.loadI18n("options_mismatched_substitutions_string");
+	REGEX_ARROW = Utilities.loadI18n("options_regex_arrow");
+	NON_REGEX_ARROW = Utilities.loadI18n("options_non_regex_arrow");
 
 	document.title = Utilities.loadI18n("options_title");
 	document.getElementById("addRuleStatus").innerHTML = Utilities.loadI18n("options_add_rule_string");

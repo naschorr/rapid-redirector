@@ -196,3 +196,30 @@ tr:hover {
 	position: relative;
 	top: 1px;
 }
+
+.tooltip {
+	position: relative;
+	display: inline-block;
+}
+
+.tooltip .tooltip-text {
+	visibility: visible;
+	width: 120px;
+	background-color: var(--dark-text-color);
+	color: var(--light-text-color);
+	text-align: center;
+	padding: 5px 0;
+	border-radius: 5px;
+
+	width: 120px;
+	bottom: 100%;
+	left: 50%;
+	margin-left: -60px;
+
+	position: relative;
+	z-index: 99;
+}
+
+.tooltip:hover .tooltip-text {
+	visibility: visible;
+}

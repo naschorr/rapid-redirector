@@ -1,0 +1,13 @@
+.DS_Store
+*.pem
+.gitattributes
+.vscode/
+*.sublime-project
+*.sublime-workspace
+testing/lib/*
+resources/*.svg
+node_modules/
+*.zip
+package.json
+testing/karma.conf.js
+testing/test-main.js

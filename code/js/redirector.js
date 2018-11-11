@@ -28,7 +28,14 @@ function isRedirectRule(url, rules) {
 		if(rule.regex) {
 			let result = regexLookup.get(rule.src).exec(url);
 			if(result) {
-				newUrl = url.antiSlice(result.index, result.index + result[0].length).insertAt(rule.dest, result.index);
+				let substitution = rule.dest;
+				rule.substitutionGroups.forEach((group) => {
+					if(result[group]) {
+						substitution = substitution.replace('$' + group.toString(), result[group].toString());
+					}
+				});
+
+				newUrl = url.antiSlice(result.index, result.index + result[0].length).insertAt(substitution, result.index);
 			}
 		}else{
 			newUrl = url.replace(rules[index].src, rules[index].dest);
@@ -98,7 +105,7 @@ function generateRegexLookup() {
 	var regexLookup = new RegexLookup();
 
 	chrome.storage.sync.get("redirectionRules", function(result) {
-		result.redirectionRules.forEach(function(rule) {
+		(result.redirectionRules || []).forEach(function(rule) {
 			if(rule.regex) {
 				regexLookup.add(rule.src);
 			}
@@ -160,8 +167,10 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 					let rules = result.redirectionRules;
 
 					/* Attempt to get a URL to redirect to */
-					let redirectUrl = isRedirectRule(url, rules);
-					if(redirectUrl === null) {
+					let redirectUrl = null;
+					if(rules && rules.length > 0) {
+						redirectUrl = isRedirectRule(url, rules);
+					} else {
 						redirectUrl = isMobile(url);
 					}
 

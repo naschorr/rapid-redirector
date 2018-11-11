@@ -6,6 +6,7 @@ let NO_DUPS_TEXT;
 let NO_CYCLES_TEXT;
 let MISMATCHED_SUBDOMAINS_TEXT;
 let MISMATCHED_PROTOCOLS_TEXT;
+let MISMATCHED_SUBSTITUTIONS_TEXT;
 /* End Globals */
 
 /* Note: 'Rule' refers to the combination of the source and destination domains. */
@@ -134,9 +135,10 @@ function hasMismatchedProtocol(source, destination) {
  * @param {string} source - The proposed domain to redirect from.
  * @param {string} destination - The proposed domain to redirect to.
  * @param {array} rules - Array of 'rules' objects to check against. {src:"source URL (or regex pattern)", dest:"destination URL", regex:boolean if .src is a regex}
+ * @param {object} regexGroups - Object containing count of regex capture groups, (key: captureGroups) and a list substitution groups (key: substitutionGroups)
  * @return {boolean} True if the proposed redirection rule passes the tests. False if it doesn't.
  */
-function isValidInput(source, destination, rules) {
+function isValidInput(source, destination, rules, regexGroups=null) {
 	/* Can't be empty or only have whitespace characters. */
 	if(!hasChars(source) || !hasChars(destination)) {
 		new NotificationPopup("red", "alert", [], NO_EMPTY_TEXT);
@@ -175,7 +177,33 @@ function isValidInput(source, destination, rules) {
 		new NotificationPopup("green", "success", [], MISMATCHED_PROTOCOLS_TEXT);
 	}
 
+	/*
+		This could also likely work, however the user should be alerted that one or more of their substitution groups in
+		the destination doesn't point to a capture group in the source address. (ex. turbo.cars.com/vdp/(d+) -> 
+		www.cars.com/vehicledetail/detail/$1/$2/ won't work, since the source address doesn't have a second capture
+		group). Also, the invalid substitution group indices get parsed out later on.
+	*/
+	if(regexGroups && regexGroups.substitutionGroups.some((groupIndex) => groupIndex > regexGroups.captureGroups)) {
+		new NotificationPopup("green", "success", [], MISMATCHED_SUBSTITUTIONS_TEXT);
+	}
+
 	return true;
+}
+
+/**
+ * Parses the source and destination strings for meta regex info, specifically about how many capture groups exist in
+ * the source, and what the substitution indices are in the destination.
+ * @param {string} source - The domain to redirect from, to check for capture groups.
+ * @param {string} destination - The domain to redirect to, to check for substitutions.
+ */
+function parseRegexGroups(source, destination) {
+	const substitutionGroupMatches = destination.match(new RegExp(/\$\d/g));
+	const substitutionGroups = (substitutionGroupMatches || []).map((group) => parseInt(group.slice(1)));
+
+	return {
+		captureGroups: new RegExp(source + "|").exec("").length - 1,	// Thanks! https://stackoverflow.com/a/16046903
+		substitutionGroups: substitutionGroups
+	};
 }
 
 /**
@@ -188,11 +216,27 @@ function storeRule(source, destination, isRegex) {
 	try{
 		// Object format = {src:"source URL (or regex pattern)", dest:"destination URL", regex:boolean if .src is a regex}
 		chrome.storage.sync.get("redirectionRules", function(result) {
-			var rules = result.redirectionRules || [];
+			const rules = result.redirectionRules || [];
+			let regexGroups = null;
+			if(isRegex) {
+				regexGroups = parseRegexGroups(source, destination);
+			}
 
-			if(isValidInput(source, destination, rules)) {
+			if(isValidInput(source, destination, rules, regexGroups)) {
 				source = source.trim();
-				rules.push({src:source, dest:destination.trim(), regex:isRegex});
+				const rule = {
+					src: source,
+					dest: destination.trim(),
+					regex: isRegex
+				};
+
+				if(isRegex) {
+					// Filter out all substitutions that try to match a capture group that doesn't exist
+					rule.substitutionGroups = regexGroups.substitutionGroups.filter((group) => {
+						return group <= regexGroups.captureGroups;
+					});
+				}
+				rules.push(rule);
 
 				chrome.storage.sync.set({redirectionRules: rules}, function() {
 					chrome.runtime.sendMessage({addRule: source});
@@ -200,7 +244,7 @@ function storeRule(source, destination, isRegex) {
 					updateRulesTable();
 				});
 			}else{
-				Utilities.debugLog(`Failed to add rule: '${source}' -> '${destination}', regex: ${isRegex}. Rule is either empty, a duplicate, or produces a cycle.`);
+				Utilities.debugLog(`Failed to add rule: '${source}' -> '${destination}', isRegex: '${isRegex}'.`);
 			}
 		});
 	}
@@ -344,6 +388,7 @@ function loadLocalizedText() {
 	NO_CYCLES_TEXT = Utilities.loadI18n("options_no_cycles_string");
 	MISMATCHED_SUBDOMAINS_TEXT = Utilities.loadI18n("options_mismatched_subdomains_string");
 	MISMATCHED_PROTOCOLS_TEXT = Utilities.loadI18n("options_mismatched_protocols_string");
+	MISMATCHED_SUBSTITUTIONS_TEXT = Utilities.loadI18n("options_mismatched_substitutions_string");
 
 	document.title = Utilities.loadI18n("options_title");
 	document.getElementById("addRuleStatus").innerHTML = Utilities.loadI18n("options_add_rule_string");

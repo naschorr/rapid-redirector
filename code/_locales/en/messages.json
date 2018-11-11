@@ -112,7 +112,22 @@
 
 	"options_mismatched_protocols_string": {
 		"message": "Success. However, there may be issues due to one of the addresses having a protocol, and the other not having one.",
-		"description": "Alert string to let the user know that they may run into issues by because one of the addresses has a protocol and the other doesn't. (ex. chrome://newtab -> reddit.com won't work, but chrome://newtab -> https://reddit.com will work.)"
+		"description": "Alert string to let the user know that they may run into issues because one of the addresses has a protocol and the other doesn't. (ex. chrome://newtab -> reddit.com won't work, but chrome://newtab -> https://reddit.com will work.)"
+	},
+
+	"options_mismatched_substitutions_string": {
+		"message": "Success. However, the not all of the substitutions in the destination address pointed to capture groups in the source address. This may produce unexpected results.",
+		"description": "Alert string to let the user know that they may run into issues because one or more of their substitution groups doesn't point to a capture group. (ex. turbo.cars.com/vdp/(d+) -> www.cars.com/vehicledetail/detail/$1/$2/ won't work, since the source address doesn't have a second capture group)"
+	},
+
+	"options_regex_arrow": {
+		"message": "This rule uses regular expressions.",
+		"description": "Let the user know (when hovering over the arrow) that this rule uses regular expressions."
+	},
+
+	"options_non_regex_arrow": {
+		"message": "This rule doesn't use regular expressions.",
+		"description": "Let the user know (when hovering over the arrow) that this rule doesn't check for regular expressions."
 	},
 
 	"notification_redirecting_to": {

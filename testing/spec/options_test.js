@@ -269,6 +269,7 @@ describe("the options page", function() {
 			non-empty source, non-empty destination, rules array without any duplicate sources and no destinations matching the non-empty source - true
 			non-empty source with one subdomain, non-empty destination with no subdomains, rules array without any duplicate sources and no destinations matching the non-empty source - true
 		*/
+	
 		it("should return false for empty source, destination, and rules arguments", function() {
 			expect(isValidInput('','',[])).toBe(false);
 		});
@@ -344,6 +345,110 @@ describe("the options page", function() {
 
 			expect(isValidInput('one.nickschorr.com', 'nickschorr.com/test/', rules)).toBe(true);
 		});
+	});
 
+	describe("the parseRegexGroups function", () => {
+		/* 	Tests:
+			falsy source and falsy destination - { captureGroups: 0, substitutionGroups: [] }
+			source has no capture groups and falsy destination - { captureGroups: 0, substitutionGroups: [] }
+			source is falsy and destination has no substitution groups - { captureGroups: 0, substitutionGroups: [] }
+			source has no capture groups and destination has no substitution groups - { captureGroups: 0, substitutionGroups: [] }
+			source has one capture group and destination has no substitution groups - { captureGroups: 1, substitutionGroups: [] }
+			source has no capture groups and destination has one substitution group - { captureGroups: 1, substitutionGroups: [].length == 1 }
+			source has three capture groups and destination has three substitution groups - { captureGroups: 3, substitutionGroups: [].length == 3 }
+			source has one capture group and destination has five substitution groups - { captureGroups: 1, substitutionGroups: [].length == 5 }
+			source has five capture groups and destination has one substitution group - { captureGroups: 5, substitutionGroups: [].length == 1 }
+			source has one capture group and destination has a two-digit number as its substitution group - { captureGroups: 1, substitutionGroups: [].length == 1 }
+		*/
+
+		it("should return { captureGroups: 0, substitutionGroups: [] } for a falsy source and destination", () => {
+			const regexGroups = parseRegexGroups(null, null);
+
+			expect(regexGroups.captureGroups).toEqual(0);
+			
+			expect(Array.isArray(regexGroups.substitutionGroups)).toBe(true)
+			expect(regexGroups.substitutionGroups.length).toEqual(0);
+		});
+
+		it("should return { captureGroups: 0, substitutionGroups: [] } for a source without capture groups and falsy destination", () => {
+			const regexGroups = parseRegexGroups("source.com", null);
+
+			expect(regexGroups.captureGroups).toEqual(0);
+			
+			expect(Array.isArray(regexGroups.substitutionGroups)).toBe(true)
+			expect(regexGroups.substitutionGroups.length).toEqual(0);
+		});
+
+		it("should return { captureGroups: 0, substitutionGroups: [] } for a falsy source and a destination without subsitution groups", () => {
+			const regexGroups = parseRegexGroups(null, "destination.com");
+
+			expect(regexGroups.captureGroups).toEqual(0);
+			
+			expect(Array.isArray(regexGroups.substitutionGroups)).toBe(true)
+			expect(regexGroups.substitutionGroups.length).toEqual(0);
+		});
+
+		it("should return { captureGroups: 0, substitutionGroups: [] } for a source without capture groups and a destination without subsitution groups", () => {
+			const regexGroups = parseRegexGroups("source.org", "destination.com");
+
+			expect(regexGroups.captureGroups).toEqual(0);
+			
+			expect(Array.isArray(regexGroups.substitutionGroups)).toBe(true)
+			expect(regexGroups.substitutionGroups.length).toEqual(0);
+		});
+
+		it("should return { captureGroups: 1, substitutionGroups: [] } for a source with one capture group and a destination without subsitution groups", () => {
+			const regexGroups = parseRegexGroups("(\w+).org", "destination.com");
+
+			expect(regexGroups.captureGroups).toEqual(1);
+			
+			expect(Array.isArray(regexGroups.substitutionGroups)).toBe(true)
+			expect(regexGroups.substitutionGroups.length).toEqual(0);
+		});
+
+		it("should return { captureGroups: 1, substitutionGroups: [].length == 1 } for a source with one capture group and a destination with one subsitution group", () => {
+			const regexGroups = parseRegexGroups("(\w+).org", "test.$1.org");
+
+			expect(regexGroups.captureGroups).toEqual(1);
+			
+			expect(Array.isArray(regexGroups.substitutionGroups)).toBe(true)
+			expect(regexGroups.substitutionGroups.length).toEqual(1);
+		});
+
+		it("should return { captureGroups: 3, substitutionGroups: [].length == 3 } for a source with three capture groups and a destination with three subsitution groups", () => {
+			const regexGroups = parseRegexGroups("(\w+).org/(\d+)/([dev|prod])", "test.$1.org/$3/$2");
+
+			expect(regexGroups.captureGroups).toEqual(3);
+			
+			expect(Array.isArray(regexGroups.substitutionGroups)).toBe(true)
+			expect(regexGroups.substitutionGroups.length).toEqual(3);
+		});
+
+		it("should return { captureGroups: 1, substitutionGroups: [].length == 5 } for a source with one capture group and a destination with five subsitution groups", () => {
+			const regexGroups = parseRegexGroups("(\w+).org/test/dev/abc", "test.$1.$2/$3/$5/$4");
+
+			expect(regexGroups.captureGroups).toEqual(1);
+			
+			expect(Array.isArray(regexGroups.substitutionGroups)).toBe(true)
+			expect(regexGroups.substitutionGroups.length).toEqual(5);
+		});
+
+		it("should return { captureGroups: 5, substitutionGroups: [].length == 1 } for a source with five capture groups and a destination with one subsitution group", () => {
+			const regexGroups = parseRegexGroups("(\w+).([org|com])/(\w+)/(u?dev)/(\w+)", "$1.test.com/dev");
+
+			expect(regexGroups.captureGroups).toEqual(5);
+			
+			expect(Array.isArray(regexGroups.substitutionGroups)).toBe(true)
+			expect(regexGroups.substitutionGroups.length).toEqual(1);
+		});
+
+		it("should return { captureGroups: 1, substitutionGroups: [].length == 1 } for a source with one capture group and a destination with one, two digit subsitution group", () => {
+			const regexGroups = parseRegexGroups("test.com/(\w+)", "test.com/$15");
+
+			expect(regexGroups.captureGroups).toEqual(1);
+			
+			expect(Array.isArray(regexGroups.substitutionGroups)).toBe(true)
+			expect(regexGroups.substitutionGroups.length).toEqual(1);
+		});
 	});
 });

@@ -197,12 +197,14 @@ function isValidInput(source, destination, rules, regexGroups=null) {
  * @param {string} destination - The domain to redirect to, to check for substitutions.
  */
 function parseRegexGroups(source, destination) {
+	source = source || "";
+	destination = destination || "";
+
 	const substitutionGroupMatches = destination.match(new RegExp(/\$\d/g));
-	const substitutionGroups = (substitutionGroupMatches || []).map((group) => parseInt(group.slice(1)));
 
 	return {
 		captureGroups: new RegExp(source + "|").exec("").length - 1,	// Thanks! https://stackoverflow.com/a/16046903
-		substitutionGroups: substitutionGroups
+		substitutionGroups: (substitutionGroupMatches || []).map((group) => parseInt(group.slice(1)))
 	};
 }
 

@@ -170,7 +170,8 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 					let redirectUrl = null;
 					if(rules && rules.length > 0) {
 						redirectUrl = isRedirectRule(url, rules);
-					} else {
+					}
+					if(!redirectUrl) {
 						redirectUrl = isMobile(url);
 					}
 
